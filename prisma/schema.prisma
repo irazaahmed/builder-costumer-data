@@ -1,0 +1,85 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String     @id @default(cuid())
+  name      String
+  email     String     @unique
+  password  String
+  phone     String?
+  role      Role       @default(CLIENT)
+  status    UserStatus @default(PENDING)
+
+  // claim fields submitted at signup, used by admin to verify
+  claimedCnic       String?
+  claimedPlotNumber String?
+
+  client    Client?
+  createdAt DateTime @default(now())
+}
+
+enum Role {
+  ADMIN
+  CLIENT
+}
+
+enum UserStatus {
+  PENDING // signed up, not yet linked by admin
+  ACTIVE // linked to a plot, can see documents
+  BLOCKED
+}
+
+model Client {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @unique
+  fullName  String
+  cnic      String?
+  phone     String?
+  plot      Plot     @relation(fields: [plotId], references: [id])
+  plotId    String   @unique
+  documents Document[]
+  createdAt DateTime @default(now())
+}
+
+model Plot {
+  id         String  @id @default(cuid())
+  plotNumber String  @unique // e.g. P-001 to P-360
+  size       String? // e.g. "120 sq yd"
+  block      String?
+  status     String  @default("SOLD")
+  client     Client?
+}
+
+model Document {
+  id         String           @id @default(cuid())
+  client     Client           @relation(fields: [clientId], references: [id])
+  clientId   String
+  uploadedBy String // admin user id
+  title      String // e.g. "Sale Agreement"
+  category   DocumentCategory @default(OTHER)
+  fileKey    String // storage path, NOT a public url
+  fileName   String
+  fileSize   Int
+  mimeType   String
+  uploadedAt DateTime         @default(now())
+}
+
+enum DocumentCategory {
+  LEGAL
+  PAYMENT
+  ALLOTMENT
+  CNIC
+  OTHER
+}
