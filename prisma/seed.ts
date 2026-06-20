@@ -114,6 +114,7 @@ async function seedDummyClients(plots: { id: string; plotNumber: string }[]) {
         cnic,
         phone,
         plotId: plot.id,
+        linkedBy: "seed-script",
       },
     });
 

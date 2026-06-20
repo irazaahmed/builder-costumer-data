@@ -3,9 +3,13 @@
 import { z } from "zod";
 import { redirect } from "next/navigation";
 import { AuthError } from "next-auth";
-import { signIn } from "@/auth";
+import { signIn, signOut } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { hashPassword, verifyPassword } from "@/lib/password";
+
+export async function logoutAction() {
+  await signOut({ redirectTo: "/login" });
+}
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email."),

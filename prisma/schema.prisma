@@ -50,6 +50,7 @@ model Client {
   plot      Plot     @relation(fields: [plotId], references: [id])
   plotId    String   @unique
   documents Document[]
+  linkedBy  String   // admin user id who performed the link action
   createdAt DateTime @default(now())
 }
 
