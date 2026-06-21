@@ -41,6 +41,12 @@
   --color-card: var(--card);
   --color-brand-accent: var(--brand-accent);
   --color-brand-accent-foreground: var(--brand-accent-foreground);
+  --color-palette-blue: var(--palette-blue);
+  --color-palette-emerald: var(--palette-emerald);
+  --color-palette-violet: var(--palette-violet);
+  --color-palette-amber: var(--palette-amber);
+  --color-palette-rose: var(--palette-rose);
+  --color-palette-slate: var(--palette-slate);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -88,6 +94,12 @@
      inline CSS vars on <html> in app/layout.tsx. These are just fallbacks. */
   --brand-accent: var(--primary);
   --brand-accent-foreground: var(--primary-foreground);
+  --palette-blue: #2563eb;
+  --palette-emerald: #16a34a;
+  --palette-violet: #7c3aed;
+  --palette-amber: #d97706;
+  --palette-rose: #e11d48;
+  --palette-slate: #64748b;
 }
 
 .dark {

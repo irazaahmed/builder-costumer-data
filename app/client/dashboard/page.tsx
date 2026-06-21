@@ -18,6 +18,26 @@ const CATEGORIES = [
   { value: "OTHER", label: "Other" },
 ] as const;
 
+// Mirrors lib/branding.ts's categoryPaletteKey mapping (LEGAL→blue,
+// PAYMENT→emerald, ALLOTMENT→violet, CNIC→amber, OTHER→slate). Written out
+// literally per-category because Tailwind can't pick up an interpolated
+// class name like `border-t-palette-${key}`.
+const CATEGORY_TILE_CLASS: Record<(typeof CATEGORIES)[number]["value"], string> = {
+  LEGAL: "border-t-4 border-t-palette-blue bg-palette-blue/5 hover:bg-palette-blue/10",
+  PAYMENT: "border-t-4 border-t-palette-emerald bg-palette-emerald/5 hover:bg-palette-emerald/10",
+  ALLOTMENT: "border-t-4 border-t-palette-violet bg-palette-violet/5 hover:bg-palette-violet/10",
+  CNIC: "border-t-4 border-t-palette-amber bg-palette-amber/5 hover:bg-palette-amber/10",
+  OTHER: "border-t-4 border-t-palette-slate bg-palette-slate/5 hover:bg-palette-slate/10",
+};
+
+const CATEGORY_COUNT_CLASS: Record<(typeof CATEGORIES)[number]["value"], string> = {
+  LEGAL: "text-palette-blue",
+  PAYMENT: "text-palette-emerald",
+  ALLOTMENT: "text-palette-violet",
+  CNIC: "text-palette-amber",
+  OTHER: "text-palette-slate",
+};
+
 export default async function ClientDashboardPage() {
   const session = await auth();
   if (!session?.user || session.user.role !== "CLIENT") {
@@ -104,9 +124,11 @@ export default async function ClientDashboardPage() {
             <Link
               key={cat.value}
               href={`/client/documents?category=${cat.value}`}
-              className="flex flex-col items-center gap-1 rounded-lg border p-4 text-center hover:bg-accent"
+              className={`flex flex-col items-center gap-1 rounded-lg border p-4 text-center transition-colors ${CATEGORY_TILE_CLASS[cat.value]}`}
             >
-              <span className="text-2xl font-semibold">{countsByCategory[cat.value]}</span>
+              <span className={`text-2xl font-semibold ${CATEGORY_COUNT_CLASS[cat.value]}`}>
+                {countsByCategory[cat.value]}
+              </span>
               <span className="text-xs text-muted-foreground">{cat.label}</span>
             </Link>
           ))}

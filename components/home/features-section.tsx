@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
+import { ShieldCheck, CheckCircle2, Headset, FileText } from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -8,26 +9,36 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 
+// Each feature picks one of the 6 shared palette colors (lib/branding.ts)
+// so the grid reads as distinct, not a single repeated accent.
 const features = [
   {
     title: "Secure Document Vault",
     description:
       "Every legal and ownership document is stored privately and is only ever accessed through short-lived, signed links.",
+    icon: ShieldCheck,
+    badgeClass: "bg-palette-blue/10 text-palette-blue",
   },
   {
     title: "Verified Ownership Records",
     description:
       "Each client account is manually verified and linked to the correct plot by the admin team before any document is visible.",
+    icon: CheckCircle2,
+    badgeClass: "bg-palette-emerald/10 text-palette-emerald",
   },
   {
     title: "Dedicated Support",
     description:
       "Our team is available to help clients with account access, verification, and any questions about their documents.",
+    icon: Headset,
+    badgeClass: "bg-palette-violet/10 text-palette-violet",
   },
   {
     title: "Transparent Process",
     description:
       "Clients can view and download their own records any time, with a clear record of what has been uploaded and when.",
+    icon: FileText,
+    badgeClass: "bg-palette-rose/10 text-palette-rose",
   },
 ];
 
@@ -60,6 +71,11 @@ export default function FeaturesSection() {
             >
               <Card className="h-full">
                 <CardHeader>
+                  <div
+                    className={`mb-2 flex size-10 items-center justify-center rounded-xl ${feature.badgeClass}`}
+                  >
+                    <feature.icon className="size-5" />
+                  </div>
                   <CardTitle>{feature.title}</CardTitle>
                   <CardDescription>{feature.description}</CardDescription>
                 </CardHeader>

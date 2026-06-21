@@ -20,6 +20,7 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { DocumentActions } from "@/components/client/document-actions";
+import { CategoryBadge } from "@/components/category-badge";
 
 const CATEGORIES = [
   { value: "LEGAL", label: "Legal" },
@@ -131,7 +132,9 @@ export default async function ClientDocumentsPage({
                 {documents.map((doc) => (
                   <TableRow key={doc.id}>
                     <TableCell>{doc.title}</TableCell>
-                    <TableCell>{doc.category}</TableCell>
+                    <TableCell>
+                      <CategoryBadge category={doc.category} />
+                    </TableCell>
                     <TableCell>{formatFileSize(doc.fileSize)}</TableCell>
                     <TableCell>
                       {doc.uploadedAt.toLocaleDateString()}

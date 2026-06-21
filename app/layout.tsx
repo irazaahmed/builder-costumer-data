@@ -27,6 +27,12 @@ const brandStyle = {
   "--primary-foreground": branding.colors.primaryForeground,
   "--brand-accent": branding.colors.accent,
   "--brand-accent-foreground": branding.colors.accentForeground,
+  "--palette-blue": branding.colors.palette.blue,
+  "--palette-emerald": branding.colors.palette.emerald,
+  "--palette-violet": branding.colors.palette.violet,
+  "--palette-amber": branding.colors.palette.amber,
+  "--palette-rose": branding.colors.palette.rose,
+  "--palette-slate": branding.colors.palette.slate,
 } as CSSProperties;
 
 export default function RootLayout({

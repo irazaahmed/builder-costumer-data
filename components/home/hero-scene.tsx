@@ -9,17 +9,31 @@ const GRID_SIZE = 8;
 const SPACING = 1.15;
 const BOX_SIZE = 0.62;
 
+// Cycles each box through 4 brand colors (instead of "mostly primary, a few
+// accent") so the grid reads as a richer multi-hue pattern. Deterministic on
+// x/z so the pattern is stable across re-renders, not random per mount.
+const GRID_COLORS = [
+  branding.colors.primary,
+  branding.colors.accent,
+  branding.colors.palette.blue,
+  branding.colors.palette.violet,
+] as const;
+
+function colorIndexFor(x: number, z: number) {
+  return (x * 3 + z * 5) % GRID_COLORS.length;
+}
+
 function PlotGrid({ shouldAnimate }: { shouldAnimate: boolean }) {
   const groupRef = useRef<Group>(null);
 
   const boxes = useMemo(() => {
-    const items: { position: [number, number, number]; isAccent: boolean }[] = [];
+    const items: { position: [number, number, number]; colorIndex: number }[] = [];
     const offset = (GRID_SIZE - 1) / 2;
     for (let x = 0; x < GRID_SIZE; x++) {
       for (let z = 0; z < GRID_SIZE; z++) {
         items.push({
           position: [(x - offset) * SPACING, 0, (z - offset) * SPACING],
-          isAccent: (x + z) % 7 === 0,
+          colorIndex: colorIndexFor(x, z),
         });
       }
     }
@@ -33,18 +47,22 @@ function PlotGrid({ shouldAnimate }: { shouldAnimate: boolean }) {
 
   return (
     <group ref={groupRef} rotation={[0.5, 0.6, 0]}>
-      {boxes.map((box, i) => (
-        <mesh key={i} position={box.position}>
-          <boxGeometry args={[BOX_SIZE, BOX_SIZE, BOX_SIZE]} />
-          <meshStandardMaterial
-            color={box.isAccent ? branding.colors.accent : branding.colors.primary}
-            emissive={box.isAccent ? branding.colors.accent : branding.colors.primary}
-            emissiveIntensity={box.isAccent ? 0.45 : 0.18}
-            roughness={0.4}
-            metalness={0.2}
-          />
-        </mesh>
-      ))}
+      {boxes.map((box, i) => {
+        const color = GRID_COLORS[box.colorIndex];
+        const isPrimary = color === branding.colors.primary;
+        return (
+          <mesh key={i} position={box.position}>
+            <boxGeometry args={[BOX_SIZE, BOX_SIZE, BOX_SIZE]} />
+            <meshStandardMaterial
+              color={color}
+              emissive={color}
+              emissiveIntensity={isPrimary ? 0.18 : 0.4}
+              roughness={0.4}
+              metalness={0.2}
+            />
+          </mesh>
+        );
+      })}
     </group>
   );
 }

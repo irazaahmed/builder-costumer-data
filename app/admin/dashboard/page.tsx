@@ -10,6 +10,7 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
+import { CategoryBadge } from "@/components/category-badge";
 
 export default async function AdminDashboardPage() {
   const session = await auth();
@@ -106,10 +107,10 @@ export default async function AdminDashboardPage() {
             ) : (
               <ul className="flex flex-col gap-2">
                 {recentDocuments.map((doc) => (
-                  <li key={doc.id} className="flex justify-between text-sm">
-                    <span>
-                      {doc.title}{" "}
-                      <span className="text-muted-foreground">({doc.category})</span>
+                  <li key={doc.id} className="flex items-center justify-between gap-3 text-sm">
+                    <span className="flex items-center gap-2">
+                      {doc.title}
+                      <CategoryBadge category={doc.category} />
                     </span>
                     <Link
                       href={`/admin/clients/${doc.client.id}`}

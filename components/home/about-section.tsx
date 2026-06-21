@@ -10,10 +10,13 @@ export default function AboutSection() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.5 }}
-      className="border-t bg-muted/30 px-6 py-16"
+      className="border-t bg-palette-blue/5 px-6 py-16"
     >
       <div className="mx-auto grid max-w-5xl gap-10 md:grid-cols-2 md:items-center">
         <div className="flex flex-col gap-4">
+          <span className="w-fit rounded-full bg-palette-blue/10 px-3 py-1 text-xs font-medium text-palette-blue">
+            360 Plots · Surjani Sector 12
+          </span>
           <h2 className="text-2xl font-semibold tracking-tight">About the Project</h2>
           <p className="text-muted-foreground">
             Spanning 17 acres in Surjani Sector 12, Karachi, this is a fully

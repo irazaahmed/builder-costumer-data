@@ -20,6 +20,7 @@ import {
 import { EditClientForm } from "@/components/admin/edit-client-form";
 import { UploadDocumentForm } from "@/components/admin/upload-document-form";
 import { DeleteDocumentButton } from "@/components/admin/delete-document-button";
+import { CategoryBadge } from "@/components/category-badge";
 
 export default async function ClientProfilePage({
   params,
@@ -93,7 +94,9 @@ export default async function ClientProfilePage({
                   {client.documents.map((doc) => (
                     <TableRow key={doc.id}>
                       <TableCell>{doc.title}</TableCell>
-                      <TableCell>{doc.category}</TableCell>
+                      <TableCell>
+                        <CategoryBadge category={doc.category} />
+                      </TableCell>
                       <TableCell>{formatFileSize(doc.fileSize)}</TableCell>
                       <TableCell>
                         <DeleteDocumentButton documentId={doc.id} />

@@ -19,7 +19,7 @@ export default function LocationSection() {
         className="object-cover"
         sizes="100vw"
       />
-      <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/70 to-primary/30" />
+      <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/60 to-palette-violet/40" />
       <div className="relative mx-auto flex max-w-5xl flex-col gap-4 px-6 py-16 text-primary-foreground">
         <h2 className="text-2xl font-semibold tracking-tight">Location</h2>
         <p className="max-w-xl text-primary-foreground/90">
