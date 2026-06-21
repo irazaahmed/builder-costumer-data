@@ -1,7 +1,9 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { Users } from "lucide-react";
 import { DataTable } from "@/components/data-table";
+import { PageHeader } from "@/components/page-header";
 import { CreateClientDialog } from "@/components/admin/create-client-dialog";
 import { columns } from "./columns";
 
@@ -34,15 +36,12 @@ export default async function ClientsPage() {
 
   return (
     <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 p-6">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <h1 className="font-heading text-2xl font-bold tracking-tight">Clients</h1>
-          <p className="text-sm text-muted-foreground">
-            {rows.length} linked client{rows.length === 1 ? "" : "s"}.
-          </p>
-        </div>
-        <CreateClientDialog availablePlots={availablePlots} />
-      </div>
+      <PageHeader
+        icon={Users}
+        title="Clients"
+        description={`${rows.length} linked client${rows.length === 1 ? "" : "s"}.`}
+        action={<CreateClientDialog availablePlots={availablePlots} />}
+      />
       <p className="text-xs text-muted-foreground sm:hidden">Scroll right to see more →</p>
       <DataTable
         columns={columns}

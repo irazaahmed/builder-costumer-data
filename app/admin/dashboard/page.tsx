@@ -12,7 +12,8 @@ import {
 import { buttonVariants } from "@/components/ui/button";
 import { CategoryBadge } from "@/components/category-badge";
 import { StatCard } from "@/components/stat-card";
-import { Users, FileText, Clock, ArrowRight } from "lucide-react";
+import { PageHeader } from "@/components/page-header";
+import { Users, FileText, Clock, ArrowRight, LayoutDashboard } from "lucide-react";
 
 export default async function AdminDashboardPage() {
   const session = await auth();
@@ -47,14 +48,11 @@ export default async function AdminDashboardPage() {
 
   return (
     <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 p-6">
-      <div className="flex flex-col gap-1">
-        <h1 className="font-heading text-2xl font-bold tracking-tight">
-          Admin Dashboard
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          Overview of clients, documents, and pending verifications.
-        </p>
-      </div>
+      <PageHeader
+        icon={LayoutDashboard}
+        title="Admin Dashboard"
+        description="Overview of clients, documents, and pending verifications."
+      />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <StatCard label="Linked clients" value={clientCount} icon={Users} color="primary" />
         <StatCard label="Documents on file" value={documentCount} icon={FileText} color="gold" />
@@ -64,7 +62,10 @@ export default async function AdminDashboardPage() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Pending verification queue</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Clock className="size-4 text-palette-amber" />
+              Pending verification queue
+            </CardTitle>
             <CardDescription>
               Signups waiting to be matched and linked to a plot.
             </CardDescription>
@@ -93,7 +94,10 @@ export default async function AdminDashboardPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Recent uploads</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <FileText className="size-4 text-primary" />
+              Recent uploads
+            </CardTitle>
             <CardDescription>The last 5 documents added to the vault.</CardDescription>
           </CardHeader>
           <CardContent>

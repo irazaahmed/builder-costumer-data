@@ -19,8 +19,10 @@ import {
   TableHead,
   TableCell,
 } from "@/components/ui/table";
+import { FileText } from "lucide-react";
 import { DocumentActions } from "@/components/client/document-actions";
 import { CategoryBadge } from "@/components/category-badge";
+import { PageHeader } from "@/components/page-header";
 
 const CATEGORIES = [
   { value: "LEGAL", label: "Legal" },
@@ -66,13 +68,11 @@ export default async function ClientDocumentsPage({
 
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 p-6">
-      <div>
-        <h1 className="font-heading text-2xl font-bold tracking-tight">Your Documents</h1>
-        <p className="text-sm text-muted-foreground">
-          View or download your documents. Links expire shortly after they are
-          generated.
-        </p>
-      </div>
+      <PageHeader
+        icon={FileText}
+        title="Your Documents"
+        description="View or download your documents. Links expire shortly after they are generated."
+      />
 
       <div className="flex flex-wrap gap-2">
         <Link
