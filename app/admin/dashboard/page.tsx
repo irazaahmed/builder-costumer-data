@@ -17,16 +17,28 @@ export default async function AdminDashboardPage() {
     redirect("/login");
   }
 
-  const [clientCount, documentCount, pendingUsers] = await Promise.all([
-    prisma.client.count(),
-    prisma.document.count(),
-    prisma.user.findMany({
-      where: { status: "PENDING" },
-      orderBy: { createdAt: "asc" },
-      take: 5,
-      select: { id: true, name: true, claimedPlotNumber: true },
-    }),
-  ]);
+  const [clientCount, documentCount, pendingUsers, recentDocuments] =
+    await Promise.all([
+      prisma.client.count(),
+      prisma.document.count(),
+      prisma.user.findMany({
+        where: { status: "PENDING" },
+        orderBy: { createdAt: "asc" },
+        take: 5,
+        select: { id: true, name: true, claimedPlotNumber: true },
+      }),
+      prisma.document.findMany({
+        orderBy: { uploadedAt: "desc" },
+        take: 5,
+        select: {
+          id: true,
+          title: true,
+          category: true,
+          uploadedAt: true,
+          client: { select: { id: true, fullName: true } },
+        },
+      }),
+    ]);
 
   const pendingCount = await prisma.user.count({ where: { status: "PENDING" } });
 
@@ -54,33 +66,64 @@ export default async function AdminDashboardPage() {
         </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Pending verification queue</CardTitle>
-          <CardDescription>
-            Signups waiting to be matched and linked to a plot.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-3">
-          {pendingUsers.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Nothing pending right now.</p>
-          ) : (
-            <ul className="flex flex-col gap-2">
-              {pendingUsers.map((u) => (
-                <li key={u.id} className="flex justify-between text-sm">
-                  <span>{u.name}</span>
-                  <span className="text-muted-foreground">
-                    Claimed: {u.claimedPlotNumber ?? "—"}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-          <Link href="/admin/pending" className={buttonVariants({ size: "sm", className: "self-start" })}>
-            View all pending
-          </Link>
-        </CardContent>
-      </Card>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Pending verification queue</CardTitle>
+            <CardDescription>
+              Signups waiting to be matched and linked to a plot.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3">
+            {pendingUsers.length === 0 ? (
+              <p className="text-sm text-muted-foreground">Nothing pending right now.</p>
+            ) : (
+              <ul className="flex flex-col gap-2">
+                {pendingUsers.map((u) => (
+                  <li key={u.id} className="flex justify-between text-sm">
+                    <span>{u.name}</span>
+                    <span className="text-muted-foreground">
+                      Claimed: {u.claimedPlotNumber ?? "—"}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <Link href="/admin/pending" className={buttonVariants({ size: "sm", className: "self-start" })}>
+              View all pending
+            </Link>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent uploads</CardTitle>
+            <CardDescription>The last 5 documents added to the vault.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {recentDocuments.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No documents uploaded yet.</p>
+            ) : (
+              <ul className="flex flex-col gap-2">
+                {recentDocuments.map((doc) => (
+                  <li key={doc.id} className="flex justify-between text-sm">
+                    <span>
+                      {doc.title}{" "}
+                      <span className="text-muted-foreground">({doc.category})</span>
+                    </span>
+                    <Link
+                      href={`/admin/clients/${doc.client.id}`}
+                      className="text-muted-foreground hover:text-foreground hover:underline"
+                    >
+                      {doc.client.fullName}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </main>
   );
 }

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
@@ -8,6 +9,14 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/card";
+
+const CATEGORIES = [
+  { value: "LEGAL", label: "Legal" },
+  { value: "PAYMENT", label: "Payment" },
+  { value: "ALLOTMENT", label: "Allotment" },
+  { value: "CNIC", label: "CNIC" },
+  { value: "OTHER", label: "Other" },
+] as const;
 
 export default async function ClientDashboardPage() {
   const session = await auth();
@@ -59,6 +68,13 @@ export default async function ClientDashboardPage() {
     redirect("/login");
   }
 
+  const countsByCategory = Object.fromEntries(
+    CATEGORIES.map((cat) => [
+      cat.value,
+      client.documents.filter((doc) => doc.category === cat.value).length,
+    ])
+  );
+
   return (
     <main className="flex flex-1 flex-col gap-6 p-6">
       <Card>
@@ -75,6 +91,25 @@ export default async function ClientDashboardPage() {
             You have {client.documents.length} document
             {client.documents.length === 1 ? "" : "s"} on file.
           </p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Documents by category</CardTitle>
+          <CardDescription>Tap a category to view those documents.</CardDescription>
+        </CardHeader>
+        <CardContent className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+          {CATEGORIES.map((cat) => (
+            <Link
+              key={cat.value}
+              href={`/client/documents?category=${cat.value}`}
+              className="flex flex-col items-center gap-1 rounded-lg border p-4 text-center hover:bg-accent"
+            >
+              <span className="text-2xl font-semibold">{countsByCategory[cat.value]}</span>
+              <span className="text-xs text-muted-foreground">{cat.label}</span>
+            </Link>
+          ))}
         </CardContent>
       </Card>
     </main>
