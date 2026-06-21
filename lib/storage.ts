@@ -49,11 +49,30 @@ export async function getUploadUrl({ key, contentType }: GetUploadUrlParams) {
   return { url, key };
 }
 
-/** Short-lived presigned GET URL for viewing/downloading a document. */
-export async function getDownloadUrl(key: string) {
+interface GetDownloadUrlOptions {
+  download?: boolean;
+  fileName?: string;
+}
+
+/**
+ * Short-lived presigned GET URL for viewing/downloading a document.
+ *
+ * By default the URL is for inline viewing (the browser renders the PDF
+ * using the object's stored mimeType). Pass `{ download: true, fileName }`
+ * to force a save-as via the Content-Disposition header instead.
+ */
+export async function getDownloadUrl(
+  key: string,
+  options?: GetDownloadUrlOptions
+) {
   const command = new GetObjectCommand({
     Bucket: BUCKET_NAME,
     Key: key,
+    ...(options?.download && options?.fileName
+      ? {
+          ResponseContentDisposition: `attachment; filename="${options.fileName.replace(/"/g, "")}"`,
+        }
+      : {}),
   });
 
   return getSignedUrl(r2Client, command, {

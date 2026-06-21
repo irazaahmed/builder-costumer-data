@@ -4,7 +4,12 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { buildDocumentKey, getUploadUrl, deleteFile } from "@/lib/storage";
+import {
+  buildDocumentKey,
+  getUploadUrl,
+  getDownloadUrl,
+  deleteFile,
+} from "@/lib/storage";
 
 export interface DocumentActionState {
   error?: string;
@@ -220,5 +225,64 @@ export async function deleteDocumentAction(
     return { success: true };
   } catch {
     return { error: "Failed to delete document. Please try again." };
+  }
+}
+
+const getDownloadUrlSchema = z.object({
+  documentId: z.string().min(1),
+  mode: z.enum(["view", "download"]),
+});
+
+// Generic message used for BOTH "document does not exist" and "document
+// exists but belongs to a different client". Returning a distinguishable
+// message for the two cases would let a client probe documentIds to learn
+// which ones exist for other clients — an enumeration / information
+// disclosure leak. Do not split this into two different messages.
+const DOCUMENT_NOT_FOUND_ERROR = "Document not found.";
+
+/**
+ * Client-only. Returns a short-lived presigned GET URL for a single document
+ * the session's own client owns. Ownership is decided exclusively by
+ * comparing the document's clientId against session.user.clientId (set at
+ * login from the linked Client row) — never against documentId or any other
+ * caller-supplied value.
+ */
+export async function getDownloadUrlAction(
+  documentId: string,
+  mode: "view" | "download"
+): Promise<DocumentActionState & { url?: string }> {
+  const session = await auth();
+  if (
+    !session?.user ||
+    session.user.role !== "CLIENT" ||
+    session.user.status !== "ACTIVE"
+  ) {
+    return { error: "Not authorized." };
+  }
+
+  const parsed = getDownloadUrlSchema.safeParse({ documentId, mode });
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Invalid input." };
+  }
+
+  try {
+    const document = await prisma.document.findUnique({
+      where: { id: parsed.data.documentId },
+    });
+
+    if (!document || document.clientId !== session.user.clientId) {
+      return { error: DOCUMENT_NOT_FOUND_ERROR };
+    }
+
+    const url = await getDownloadUrl(
+      document.fileKey,
+      parsed.data.mode === "download"
+        ? { download: true, fileName: document.fileName }
+        : undefined
+    );
+
+    return { success: true, url };
+  } catch {
+    return { error: "Failed to generate download link. Please try again." };
   }
 }
