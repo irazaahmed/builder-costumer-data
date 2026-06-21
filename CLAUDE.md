@@ -76,6 +76,8 @@ This prevents a random signup from ever accessing someone else's documents. The 
 
 Admin accounts are seeded, not self-signup.
 
+**Alternative: admin-created clients.** The admin can also create a client directly from `/admin/clients` (`createClientAction`), skipping self-signup/PENDING entirely — the admin sets the client's name, email, initial password, phone, CNIC, and plot in one step, and the account goes straight to `ACTIVE`. Use this when onboarding a client who won't self-signup. There is no email/SMS in this app, so the admin must relay the password to the client manually; the password is shown once, in plain text, right after creation.
+
 ---
 
 ## Data Model (Prisma Schema)
@@ -177,14 +179,14 @@ All file storage is on **Cloudflare R2**, accessed through the S3-compatible API
 ## Routes and Panels
 
 ### Public
-- `/` Simple, clean landing: builder/project name, brief about, and a prominent "Client Login" and "Sign Up" button. This is a portal, so the landing can be minimal and professional, not a big marketing site.
+- `/` Full builder landing page: header nav with the portal login/signup links, hero, About the Project, Why Choose Us, Location, Contact, footer. All copy uses only the real project facts above (17-acre project, Surjani Sector 12 Karachi, 360 sold plots) plus generic placeholder content elsewhere — replace with real content/images when available, same spirit as the placeholder branding.
 - `/login` Login, redirect by role and status.
 - `/signup` Client signup with email, password, name, phone, CNIC, claimed plot number.
 
 ### Admin (ADMIN role only)
 - `/admin/dashboard` Overview: total clients, total documents, recent uploads, and the **pending verification list** (top priority widget).
 - `/admin/pending` Full list of PENDING signups, with a "link to plot" action.
-- `/admin/clients` All 360 clients, searchable by name, plot number, CNIC. TanStack Table with pagination.
+- `/admin/clients` All clients, searchable by name, plot number, CNIC. TanStack Table with pagination. "Create new client" button for the admin-created-client flow (see Authentication and Linking Flow above).
 - `/admin/clients/[id]` One client's profile, their plot, and all their documents. Upload new document here (title, category, file). Delete document. Edit client details.
 - `/admin/plots` Plot list (P-001 to P-360) with linked client status.
 

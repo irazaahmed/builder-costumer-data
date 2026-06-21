@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { DataTable } from "@/components/data-table";
+import { CreateClientDialog } from "@/components/admin/create-client-dialog";
 import { columns } from "./columns";
 
 export default async function ClientsPage() {
@@ -10,10 +11,17 @@ export default async function ClientsPage() {
     redirect("/login");
   }
 
-  const clients = await prisma.client.findMany({
-    orderBy: { plot: { plotNumber: "asc" } },
-    include: { plot: true, _count: { select: { documents: true } } },
-  });
+  const [clients, availablePlots] = await Promise.all([
+    prisma.client.findMany({
+      orderBy: { plot: { plotNumber: "asc" } },
+      include: { plot: true, _count: { select: { documents: true } } },
+    }),
+    prisma.plot.findMany({
+      where: { client: null },
+      orderBy: { plotNumber: "asc" },
+      select: { id: true, plotNumber: true },
+    }),
+  ]);
 
   const rows = clients.map((c) => ({
     id: c.id,
@@ -26,11 +34,14 @@ export default async function ClientsPage() {
 
   return (
     <main className="flex flex-1 flex-col gap-6 p-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Clients</h1>
-        <p className="text-sm text-muted-foreground">
-          {rows.length} linked client{rows.length === 1 ? "" : "s"}.
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold">Clients</h1>
+          <p className="text-sm text-muted-foreground">
+            {rows.length} linked client{rows.length === 1 ? "" : "s"}.
+          </p>
+        </div>
+        <CreateClientDialog availablePlots={availablePlots} />
       </div>
       <DataTable
         columns={columns}
