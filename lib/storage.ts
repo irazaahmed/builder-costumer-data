@@ -16,6 +16,12 @@ const r2Client = new S3Client({
     accessKeyId: process.env.R2_ACCESS_KEY_ID!,
     secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
   },
+  // The SDK's default ("WHEN_SUPPORTED") bakes a CRC32 checksum requirement
+  // into presigned PutObject URLs before the file body is known, which then
+  // fails signature validation when the browser PUTs the real file directly
+  // to R2. "WHEN_REQUIRED" only attaches checksums when the operation
+  // mandates one, which plain PutObject does not.
+  requestChecksumCalculation: "WHEN_REQUIRED",
 });
 
 const BUCKET_NAME = process.env.R2_BUCKET_NAME!;

@@ -18,6 +18,8 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { EditClientForm } from "@/components/admin/edit-client-form";
+import { UploadDocumentForm } from "@/components/admin/upload-document-form";
+import { DeleteDocumentButton } from "@/components/admin/delete-document-button";
 
 export default async function ClientProfilePage({
   params,
@@ -70,10 +72,11 @@ export default async function ClientProfilePage({
           <CardHeader>
             <CardTitle>Documents ({client.documents.length})</CardTitle>
             <CardDescription>
-              Document upload comes in the next phase — this is a read-only list for now.
+              Upload a new document for this client, or remove an existing one.
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex flex-col gap-6">
+            <UploadDocumentForm clientId={client.id} />
             {client.documents.length === 0 ? (
               <p className="text-sm text-muted-foreground">No documents uploaded yet.</p>
             ) : (
@@ -83,6 +86,7 @@ export default async function ClientProfilePage({
                     <TableHead>Title</TableHead>
                     <TableHead>Category</TableHead>
                     <TableHead>Size</TableHead>
+                    <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -91,6 +95,9 @@ export default async function ClientProfilePage({
                       <TableCell>{doc.title}</TableCell>
                       <TableCell>{doc.category}</TableCell>
                       <TableCell>{formatFileSize(doc.fileSize)}</TableCell>
+                      <TableCell>
+                        <DeleteDocumentButton documentId={doc.id} />
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
