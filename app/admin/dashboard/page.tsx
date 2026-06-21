@@ -107,14 +107,17 @@ export default async function AdminDashboardPage() {
             ) : (
               <ul className="flex flex-col gap-2">
                 {recentDocuments.map((doc) => (
-                  <li key={doc.id} className="flex items-center justify-between gap-3 text-sm">
-                    <span className="flex items-center gap-2">
+                  <li
+                    key={doc.id}
+                    className="flex flex-col gap-1 text-sm sm:flex-row sm:items-center sm:justify-between sm:gap-3"
+                  >
+                    <span className="flex flex-wrap items-center gap-2">
                       {doc.title}
                       <CategoryBadge category={doc.category} />
                     </span>
                     <Link
                       href={`/admin/clients/${doc.client.id}`}
-                      className="text-muted-foreground hover:text-foreground hover:underline"
+                      className="text-xs text-muted-foreground hover:text-foreground hover:underline sm:text-sm sm:text-right"
                     >
                       {doc.client.fullName}
                     </Link>

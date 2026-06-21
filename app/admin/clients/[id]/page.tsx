@@ -81,30 +81,33 @@ export default async function ClientProfilePage({
             {client.documents.length === 0 ? (
               <p className="text-sm text-muted-foreground">No documents uploaded yet.</p>
             ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Title</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Size</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {client.documents.map((doc) => (
-                    <TableRow key={doc.id}>
-                      <TableCell>{doc.title}</TableCell>
-                      <TableCell>
-                        <CategoryBadge category={doc.category} />
-                      </TableCell>
-                      <TableCell>{formatFileSize(doc.fileSize)}</TableCell>
-                      <TableCell>
-                        <DeleteDocumentButton documentId={doc.id} />
-                      </TableCell>
+              <>
+                <p className="text-xs text-muted-foreground sm:hidden">Scroll right to see more →</p>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Title</TableHead>
+                      <TableHead>Category</TableHead>
+                      <TableHead>Size</TableHead>
+                      <TableHead>Actions</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {client.documents.map((doc) => (
+                      <TableRow key={doc.id}>
+                        <TableCell>{doc.title}</TableCell>
+                        <TableCell>
+                          <CategoryBadge category={doc.category} />
+                        </TableCell>
+                        <TableCell>{formatFileSize(doc.fileSize)}</TableCell>
+                        <TableCell>
+                          <DeleteDocumentButton documentId={doc.id} />
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </>
             )}
           </CardContent>
         </Card>

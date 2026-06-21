@@ -118,34 +118,57 @@ export default async function ClientDocumentsPage({
                 : "No documents have been uploaded for you yet."}
             </p>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Size</TableHead>
-                  <TableHead>Uploaded</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+            <>
+              <div className="hidden md:block">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Title</TableHead>
+                      <TableHead>Category</TableHead>
+                      <TableHead>Size</TableHead>
+                      <TableHead>Uploaded</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {documents.map((doc) => (
+                      <TableRow key={doc.id}>
+                        <TableCell>{doc.title}</TableCell>
+                        <TableCell>
+                          <CategoryBadge category={doc.category} />
+                        </TableCell>
+                        <TableCell>{formatFileSize(doc.fileSize)}</TableCell>
+                        <TableCell>
+                          {doc.uploadedAt.toLocaleDateString()}
+                        </TableCell>
+                        <TableCell>
+                          <DocumentActions documentId={doc.id} />
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+              <div className="flex flex-col gap-3 md:hidden">
                 {documents.map((doc) => (
-                  <TableRow key={doc.id}>
-                    <TableCell>{doc.title}</TableCell>
-                    <TableCell>
-                      <CategoryBadge category={doc.category} />
-                    </TableCell>
-                    <TableCell>{formatFileSize(doc.fileSize)}</TableCell>
-                    <TableCell>
-                      {doc.uploadedAt.toLocaleDateString()}
-                    </TableCell>
-                    <TableCell>
-                      <DocumentActions documentId={doc.id} />
-                    </TableCell>
-                  </TableRow>
+                  <Card key={doc.id} size="sm">
+                    <CardContent className="flex flex-col gap-3">
+                      <div className="flex items-start justify-between gap-2">
+                        <span className="font-medium">{doc.title}</span>
+                        <CategoryBadge category={doc.category} />
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        {formatFileSize(doc.fileSize)} ·{" "}
+                        {doc.uploadedAt.toLocaleDateString()}
+                      </p>
+                      <div className="flex gap-2">
+                        <DocumentActions documentId={doc.id} />
+                      </div>
+                    </CardContent>
+                  </Card>
                 ))}
-              </TableBody>
-            </Table>
+              </div>
+            </>
           )}
         </CardContent>
       </Card>

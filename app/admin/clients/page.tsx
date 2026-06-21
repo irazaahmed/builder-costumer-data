@@ -43,6 +43,7 @@ export default async function ClientsPage() {
         </div>
         <CreateClientDialog availablePlots={availablePlots} />
       </div>
+      <p className="text-xs text-muted-foreground sm:hidden">Scroll right to see more →</p>
       <DataTable
         columns={columns}
         data={rows}
