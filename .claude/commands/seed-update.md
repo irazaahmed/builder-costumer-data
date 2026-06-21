@@ -1,15 +1,14 @@
 ---
-description: Safely add dummy data to prisma/seed.ts
-argument-hint: [what to add, e.g. "5 more pending signups" or "documents for client P-010"]
+description: Safely update prisma/seed.ts (structural data only — admin and plots)
+argument-hint: [what to change, e.g. "add a 5th block" or "fix plot sizes for block C"]
 ---
 
-Update `prisma/seed.ts` for the Client Document Vault and Portal project to add: $ARGUMENTS
+Update `prisma/seed.ts` for the Client Document Vault and Portal project to: $ARGUMENTS
 
-Follow CLAUDE.md's "Dummy Data Seeding" section and the `prisma-conventions` skill:
+`prisma/seed.ts` now seeds only permanent structural data (the admin user and the 360 plots) — see CLAUDE.md's "Data Seeding" section. Dummy clients, pending signups, and sample documents were removed once real client onboarding began; **do not reintroduce them here**. Real clients are added one at a time through the app itself (self-signup + admin link, or the admin-create-client flow), never through this script.
+
+Follow the `prisma-conventions` skill:
 
 - Plots are `P-001` through `P-360`, always status `SOLD`. Don't duplicate an existing `plotNumber`.
 - Seeded admin stays `admin@portal.com` unless told otherwise.
-- New dummy clients need a `User` (hashed password via `lib/password.ts`, status `ACTIVE` if linked, `PENDING` if simulating an unlinked signup) and a `Client` row with a unique `plotId`.
-- Any new sample `Document` rows need a real small placeholder PDF actually uploaded to the R2 bucket via `lib/storage.ts` (not just a fake `fileKey`), so view/download works end to end — don't fabricate a `fileKey` that points at nothing.
-- Keep the script written so it still scales to all 360 real clients later — don't add one-off logic that only makes sense for the current dummy subset.
-- After editing, run the seed (`npx prisma db seed` or however it's wired) only if a real `DATABASE_URL` is configured; otherwise report the change and let the user run it.
+- After editing, run the seed (`npx prisma db seed` or however it's wired) only if a real `DATABASE_URL` is configured and the user has confirmed it's safe to run against that database; otherwise report the change and let the user run it.

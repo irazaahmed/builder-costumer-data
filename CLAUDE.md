@@ -198,17 +198,14 @@ Enforce role AND status checks in middleware and in every server action. Never t
 
 ---
 
-## Dummy Data Seeding
+## Data Seeding
 
-Create `prisma/seed.ts` that inserts:
+`prisma/seed.ts` inserts only permanent structural data:
 
 - One admin user (email `admin@portal.com`, known dev password, hashed).
 - 360 plots, numbered `P-001` to `P-360`, all status SOLD, with varied sizes/blocks.
-- About 20 to 30 dummy clients (not all 360, enough to test) each linked to a plot and a User with status ACTIVE.
-- A few PENDING signup users not yet linked, so the verification flow is testable.
-- For some clients, seed 3 to 6 sample `Document` rows across different categories. Use placeholder PDF files (small dummy PDFs) uploaded to the R2 bucket so view/download actually works end to end.
 
-Build the seeding so it can later be extended to all 360 real clients.
+Dummy clients, pending signups, and sample documents were used during Phases 3-5 to test the verification/upload/view flows end to end, then deliberately removed from both the database and `seed.ts` once real client onboarding began. Re-running the seed script must never recreate fake clients. Real clients are now added one at a time, either via self-signup + admin link, or via the admin-create-client flow.
 
 ---
 
