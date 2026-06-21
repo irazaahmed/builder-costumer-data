@@ -10,16 +10,23 @@ Build with **dummy data first** (dummy clients, dummy plots, sample PDFs), struc
 
 ---
 
-## Branding (Placeholder For Now)
+## Branding (Finalized)
 
-The final **website name, logo, color theme, and overall visual identity are NOT decided yet**. They will be confirmed and added later. For now:
+The brand identity is now decided:
 
-- Use a neutral placeholder name (e.g. "Builder Portal") and a simple, clean, professional default theme.
-- Do NOT hardcode the name, colors, logo, or fonts across the codebase. Put ALL branding values in ONE central config file (e.g. `lib/branding.ts` or `config/site.ts`): site name, tagline, primary color, accent color, logo path, and contact info.
-- Every component must read branding from this config, never use literal brand strings or color hex values inline. Use Tailwind theme tokens / CSS variables for colors so a single change updates the whole app.
-- The logo should be a single swappable file (e.g. `public/logo.svg`) referenced from the config.
+- **Name:** "Lodhi Brothers Housing Society" (short form "Lodhi Brothers" for tight spaces).
+- **Color theme:** deep **emerald green** (`#0F5132` / strong `#157347`) as the primary, with **gold** (`#C8A04D`, light `#E3C77B`) as the accent — the premium real-estate convention (rich primary + gold).
+- **Logo:** a theme-adaptive rooftop-house badge + wordmark (`components/brand-logo.tsx`, drawn with CSS theme vars so it adapts to light/dark) plus a matching standalone `public/logo.svg` for the favicon/OG.
+- **Themes:** full **light + dark** support via `next-themes` (`components/theme-provider.tsx`), toggled from every navbar (`components/theme-toggle.tsx`). Light is the default.
 
-Goal: when the real name, logo, and colors are finalized, updating one config file and one logo file should rebrand the entire site. No find-and-replace across many files.
+The centralization rules still stand and MUST be followed for any future change:
+
+- ALL branding values live in ONE config file, `lib/branding.ts` (site name, short name, tagline, brand colors, palette, logo path, contact info). Do NOT hardcode the name, colors, logo, or fonts anywhere else.
+- Every component reads branding from this config / Tailwind theme tokens / CSS variables — never literal brand strings or color hex values inline (the one allowed exception is the fixed paper-white wall in the logo art).
+- Color flow: `lib/branding.ts` → injected as `--brand*` / `--gold*` CSS vars on `<html>` (`app/layout.tsx`) → derived into shadcn theme tokens for both themes in `app/globals.css`. This keeps per-theme tuning while preserving one-file rebranding.
+- The logo stays a single swappable file (`public/logo.svg`) plus the `BrandLogo` component, both reading from the config.
+
+Goal (unchanged): rebranding the entire site — both themes — should still be a single edit to `lib/branding.ts` (plus the one logo file). No find-and-replace across many files.
 
 ---
 

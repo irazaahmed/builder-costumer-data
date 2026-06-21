@@ -96,23 +96,40 @@ export default async function ClientDashboardPage() {
   );
 
   return (
-    <main className="flex flex-1 flex-col gap-6 p-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Welcome, {client.fullName}</CardTitle>
-          <CardDescription>
-            Plot {client.plot.plotNumber}
-            {client.plot.block ? ` · Block ${client.plot.block}` : ""}
-            {client.plot.size ? ` · ${client.plot.size}` : ""}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground">
+    <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 p-6">
+      <div className="relative overflow-hidden rounded-2xl bg-brand-gradient p-6 text-primary-foreground shadow-md sm:p-8">
+        <div
+          aria-hidden
+          className="absolute -right-10 -top-10 size-48 rounded-full bg-gold/20 blur-2xl"
+        />
+        <div className="relative flex flex-col gap-2">
+          <span className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-light">
+            Welcome back
+          </span>
+          <h1 className="font-heading text-2xl font-bold tracking-tight sm:text-3xl">
+            {client.fullName}
+          </h1>
+          <div className="flex flex-wrap items-center gap-2 text-sm text-primary-foreground/85">
+            <span className="rounded-full bg-black/15 px-3 py-1 font-medium">
+              Plot {client.plot.plotNumber}
+            </span>
+            {client.plot.block && (
+              <span className="rounded-full bg-black/15 px-3 py-1">
+                Block {client.plot.block}
+              </span>
+            )}
+            {client.plot.size && (
+              <span className="rounded-full bg-black/15 px-3 py-1">
+                {client.plot.size}
+              </span>
+            )}
+          </div>
+          <p className="mt-1 text-sm text-primary-foreground/80">
             You have {client.documents.length} document
             {client.documents.length === 1 ? "" : "s"} on file.
           </p>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       <Card>
         <CardHeader>

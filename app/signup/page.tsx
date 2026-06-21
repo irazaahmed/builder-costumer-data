@@ -1,9 +1,13 @@
+import type { Metadata } from "next";
 import { SignupForm } from "@/components/auth/signup-form";
+import { AuthShell } from "@/components/auth/auth-shell";
+
+export const metadata: Metadata = { title: "Sign Up" };
 
 export default function SignupPage() {
   return (
-    <main className="flex flex-1 items-center justify-center p-6">
+    <AuthShell>
       <SignupForm />
-    </main>
+    </AuthShell>
   );
 }

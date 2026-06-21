@@ -21,9 +21,9 @@ export function SignupForm() {
   const [state, action, pending] = useActionState(signupAction, initialState);
 
   return (
-    <Card className="w-full max-w-sm">
+    <Card className="w-full max-w-sm shadow-lg">
       <CardHeader>
-        <CardTitle>Client Sign Up</CardTitle>
+        <CardTitle className="font-heading text-xl font-bold">Client Sign Up</CardTitle>
         <CardDescription>
           Create an account, then the admin will verify and link you to your
           plot before you can see your documents.

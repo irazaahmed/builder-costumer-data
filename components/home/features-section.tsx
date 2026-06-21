@@ -49,12 +49,17 @@ export default function FeaturesSection() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.5 }}
-      className="px-6 py-16"
+      className="px-6 py-20"
     >
-      <div className="mx-auto flex max-w-5xl flex-col gap-8">
-        <div className="flex flex-col gap-2 text-center">
-          <h2 className="text-2xl font-semibold tracking-tight">Why Choose Us</h2>
-          <p className="text-muted-foreground">
+      <div className="mx-auto flex max-w-5xl flex-col gap-10">
+        <div className="flex flex-col items-center gap-3 text-center">
+          <span className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">
+            Why Choose Us
+          </span>
+          <h2 className="font-heading text-3xl font-bold tracking-tight">
+            Built for <span className="text-primary">trust & security</span>
+          </h2>
+          <p className="max-w-xl text-muted-foreground">
             Built around one priority: keeping your documents safe and easy to
             reach.
           </p>
@@ -69,10 +74,10 @@ export default function FeaturesSection() {
               transition={{ duration: 0.4, delay: i * 0.1 }}
               whileHover={{ y: -4 }}
             >
-              <Card className="h-full">
+              <Card className="h-full transition-all hover:-translate-y-1 hover:shadow-lg hover:ring-gold/30">
                 <CardHeader>
                   <div
-                    className={`mb-2 flex size-10 items-center justify-center rounded-xl ${feature.badgeClass}`}
+                    className={`mb-2 flex size-11 items-center justify-center rounded-xl ${feature.badgeClass}`}
                   >
                     <feature.icon className="size-5" />
                   </div>

@@ -33,10 +33,10 @@ export default async function ClientsPage() {
   }));
 
   return (
-    <main className="flex flex-1 flex-col gap-6 p-6">
-      <div className="flex items-center justify-between">
+    <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 p-6">
+      <div className="flex items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold">Clients</h1>
+          <h1 className="font-heading text-2xl font-bold tracking-tight">Clients</h1>
           <p className="text-sm text-muted-foreground">
             {rows.length} linked client{rows.length === 1 ? "" : "s"}.
           </p>

@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
 import { CategoryBadge } from "@/components/category-badge";
+import { StatCard } from "@/components/stat-card";
+import { Users, FileText, Clock, ArrowRight } from "lucide-react";
 
 export default async function AdminDashboardPage() {
   const session = await auth();
@@ -44,27 +46,19 @@ export default async function AdminDashboardPage() {
   const pendingCount = await prisma.user.count({ where: { status: "PENDING" } });
 
   return (
-    <main className="flex flex-1 flex-col gap-6 p-6">
-      <h1 className="text-2xl font-semibold">Admin Dashboard</h1>
+    <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 p-6">
+      <div className="flex flex-col gap-1">
+        <h1 className="font-heading text-2xl font-bold tracking-tight">
+          Admin Dashboard
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          Overview of clients, documents, and pending verifications.
+        </p>
+      </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <Card>
-          <CardHeader>
-            <CardTitle>{clientCount}</CardTitle>
-            <CardDescription>Linked clients</CardDescription>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>{documentCount}</CardTitle>
-            <CardDescription>Documents on file</CardDescription>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>{pendingCount}</CardTitle>
-            <CardDescription>Pending verification</CardDescription>
-          </CardHeader>
-        </Card>
+        <StatCard label="Linked clients" value={clientCount} icon={Users} color="primary" />
+        <StatCard label="Documents on file" value={documentCount} icon={FileText} color="gold" />
+        <StatCard label="Pending verification" value={pendingCount} icon={Clock} color="amber" />
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -92,6 +86,7 @@ export default async function AdminDashboardPage() {
             )}
             <Link href="/admin/pending" className={buttonVariants({ size: "sm", className: "self-start" })}>
               View all pending
+              <ArrowRight />
             </Link>
           </CardContent>
         </Card>

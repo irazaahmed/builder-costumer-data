@@ -1,4 +1,3 @@
-import { branding } from "@/lib/branding";
 import { PortalHeader } from "@/components/portal-header";
 
 const NAV_LINKS = [
@@ -11,7 +10,7 @@ const NAV_LINKS = [
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex flex-1 flex-col">
-      <PortalHeader title={`${branding.siteName} Admin`} navLinks={NAV_LINKS} />
+      <PortalHeader navLinks={NAV_LINKS} homeHref="/admin/dashboard" badge="Admin" />
       {children}
     </div>
   );

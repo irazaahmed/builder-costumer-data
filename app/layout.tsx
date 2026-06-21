@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { branding } from "@/lib/branding";
+import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,18 +16,25 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: branding.siteName,
+  title: {
+    default: branding.siteName,
+    template: `%s · ${branding.shortName}`,
+  },
   description: branding.tagline,
+  icons: { icon: branding.logoPath },
 };
 
-// Brand colors are defined once in lib/branding.ts and applied here as CSS
-// variables, so the entire theme (via Tailwind tokens like bg-primary)
-// updates from a single edit once the real branding is finalized.
+// Brand source colors are defined once in lib/branding.ts and injected here as
+// CSS variables. app/globals.css derives every theme token (primary, ring,
+// sidebar, gold, gradients) from these, so a single edit to branding.ts
+// re-skins the entire app in both light and dark themes.
 const brandStyle = {
-  "--primary": branding.colors.primary,
-  "--primary-foreground": branding.colors.primaryForeground,
-  "--brand-accent": branding.colors.accent,
-  "--brand-accent-foreground": branding.colors.accentForeground,
+  "--brand": branding.colors.primary,
+  "--brand-strong": branding.colors.primaryStrong,
+  "--brand-foreground": branding.colors.primaryForeground,
+  "--gold": branding.colors.accent,
+  "--gold-light": branding.colors.goldLight,
+  "--gold-foreground": branding.colors.accentForeground,
   "--palette-blue": branding.colors.palette.blue,
   "--palette-emerald": branding.colors.palette.emerald,
   "--palette-violet": branding.colors.palette.violet,
@@ -43,10 +51,20 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       style={brandStyle}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }

@@ -21,9 +21,9 @@ export function LoginForm() {
   const [state, action, pending] = useActionState(loginAction, initialState);
 
   return (
-    <Card className="w-full max-w-sm">
+    <Card className="w-full max-w-sm shadow-lg">
       <CardHeader>
-        <CardTitle>Client Login</CardTitle>
+        <CardTitle className="font-heading text-xl font-bold">Client Login</CardTitle>
         <CardDescription>
           Log in to view your plot documents.
         </CardDescription>

@@ -29,9 +29,9 @@ export default async function ClientProfilePage() {
   }
 
   return (
-    <main className="flex flex-1 flex-col gap-6 p-6">
+    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 p-6">
       <div>
-        <h1 className="text-2xl font-semibold">Your Profile</h1>
+        <h1 className="font-heading text-2xl font-bold tracking-tight">Your Profile</h1>
         <p className="text-sm text-muted-foreground">
           Read-only details on file. Contact the admin office to update any of
           this information.

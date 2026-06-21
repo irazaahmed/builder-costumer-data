@@ -31,9 +31,9 @@ export default async function PendingPage() {
   ]);
 
   return (
-    <main className="flex flex-1 flex-col gap-6 p-6">
+    <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 p-6">
       <div>
-        <h1 className="text-2xl font-semibold">Pending Verification</h1>
+        <h1 className="font-heading text-2xl font-bold tracking-tight">Pending Verification</h1>
         <p className="text-sm text-muted-foreground">
           {pendingUsers.length} signup{pendingUsers.length === 1 ? "" : "s"}{" "}
           waiting to be linked to a plot.
