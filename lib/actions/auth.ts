@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { redirect } from "next/navigation";
 import { AuthError } from "next-auth";
-import { signIn, signOut } from "@/auth";
+import { auth, signIn, signOut } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { hashPassword, verifyPassword } from "@/lib/password";
 
@@ -128,4 +128,77 @@ export async function signupAction(
   }
 
   return {};
+}
+
+export interface PasswordActionState {
+  error?: string;
+  success?: boolean;
+}
+
+const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Enter your current password."),
+    newPassword: z
+      .string()
+      .min(8, "New password must be at least 8 characters."),
+    confirmPassword: z.string().min(1, "Please confirm your new password."),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "New password and confirmation do not match.",
+    path: ["confirmPassword"],
+  });
+
+/**
+ * Lets the logged-in user change their own password. The account is always
+ * derived from the session (never from input), so a caller can only ever
+ * change their own password. The current password must be verified first.
+ */
+export async function changePasswordAction(
+  _prevState: PasswordActionState | undefined,
+  formData: FormData
+): Promise<PasswordActionState> {
+  // 1. Auth check first.
+  const session = await auth();
+  if (!session?.user) {
+    return { error: "Not authenticated." };
+  }
+
+  // 2. Validate input.
+  const parsed = changePasswordSchema.safeParse({
+    currentPassword: formData.get("currentPassword"),
+    newPassword: formData.get("newPassword"),
+    confirmPassword: formData.get("confirmPassword"),
+  });
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Invalid input." };
+  }
+
+  const { currentPassword, newPassword } = parsed.data;
+
+  if (currentPassword === newPassword) {
+    return {
+      error: "New password must be different from your current password.",
+    };
+  }
+
+  // 3. Business logic — scope strictly to the session user's own id.
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+  });
+  if (!user) {
+    return { error: "Account not found." };
+  }
+
+  const valid = await verifyPassword(currentPassword, user.password);
+  if (!valid) {
+    return { error: "Your current password is incorrect." };
+  }
+
+  const hashed = await hashPassword(newPassword);
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { password: hashed },
+  });
+
+  return { success: true };
 }

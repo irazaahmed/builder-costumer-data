@@ -5,6 +5,7 @@ const NAV_LINKS = [
   { href: "/admin/pending", label: "Pending" },
   { href: "/admin/clients", label: "Clients" },
   { href: "/admin/plots", label: "Plots" },
+  { href: "/admin/settings", label: "Settings" },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
