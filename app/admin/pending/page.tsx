@@ -27,7 +27,7 @@ export default async function PendingPage() {
     }),
     prisma.plot.findMany({
       where: { client: null, status: { not: "CANCELLED" } },
-      orderBy: { plotNumber: "asc" },
+      orderBy: { sortIndex: "asc" },
       select: { id: true, plotNumber: true },
     }),
   ]);

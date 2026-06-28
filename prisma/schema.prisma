@@ -60,6 +60,7 @@ model Plot {
   id         String  @id @default(cuid())
   plotNumber String  @unique // e.g. R-01..R-322, L-01..L-37
   status     String  @default("SOLD")
+  sortIndex  Int     @default(0) // position in the official member list (display order)
   client     Client?
 }
 

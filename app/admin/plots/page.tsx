@@ -13,7 +13,7 @@ export default async function PlotsPage() {
   }
 
   const plots = await prisma.plot.findMany({
-    orderBy: { plotNumber: "asc" },
+    orderBy: { sortIndex: "asc" },
     include: { client: { select: { id: true, fullName: true } } },
   });
 

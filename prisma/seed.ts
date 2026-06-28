@@ -20,9 +20,13 @@ function buildPlots() {
   const numbers: string[] = [];
   for (let i = 1; i <= R_PLOTS; i++) numbers.push(`R-${pad(i)}`);
   for (let i = 1; i <= L_PLOTS; i++) numbers.push(`L-${pad(i)}`);
-  return numbers.map((plotNumber) => ({
+  // sortIndex preserves the exact order of the official member list
+  // (R-01..R-322 then L-01..L-37) so the app displays plots in that order
+  // rather than lexicographically by plotNumber.
+  return numbers.map((plotNumber, i) => ({
     plotNumber,
     status: CANCELLED_PLOTS.has(plotNumber) ? "CANCELLED" : "SOLD",
+    sortIndex: i + 1,
   }));
 }
 

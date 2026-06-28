@@ -15,12 +15,12 @@ export default async function ClientsPage() {
 
   const [clients, availablePlots] = await Promise.all([
     prisma.client.findMany({
-      orderBy: { plot: { plotNumber: "asc" } },
+      orderBy: { plot: { sortIndex: "asc" } },
       include: { plot: true, _count: { select: { documents: true } } },
     }),
     prisma.plot.findMany({
       where: { client: null, status: { not: "CANCELLED" } },
-      orderBy: { plotNumber: "asc" },
+      orderBy: { sortIndex: "asc" },
       select: { id: true, plotNumber: true },
     }),
   ]);
