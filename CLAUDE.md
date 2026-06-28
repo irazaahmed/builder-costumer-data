@@ -117,24 +117,25 @@ enum UserStatus {
 }
 
 model Client {
-  id         String     @id @default(cuid())
-  user       User       @relation(fields: [userId], references: [id])
-  userId     String     @unique
-  fullName   String
-  cnic       String?
-  phone      String?
-  plot       Plot       @relation(fields: [plotId], references: [id])
-  plotId     String     @unique
-  documents  Document[]
-  createdAt  DateTime   @default(now())
+  id             String     @id @default(cuid())
+  user           User       @relation(fields: [userId], references: [id])
+  userId         String     @unique
+  fullName       String
+  cnic           String?
+  phone          String?
+  address        String?
+  membershipDate DateTime?           // date of membership (from the member list)
+  plot           Plot       @relation(fields: [plotId], references: [id])
+  plotId         String     @unique
+  documents      Document[]
+  linkedBy       String              // admin user id who performed the link
+  createdAt      DateTime   @default(now())
 }
 
 model Plot {
   id         String   @id @default(cuid())
-  plotNumber String   @unique   // e.g. P-001 to P-360
-  size       String?            // e.g. "120 sq yd"
-  block      String?
-  status     String   @default("SOLD")
+  plotNumber String   @unique   // real scheme: R-01..R-322, L-01..L-37
+  status     String   @default("SOLD")  // "SOLD", or "CANCELLED" (e.g. R-248)
   client     Client?
 }
 
@@ -195,7 +196,7 @@ All file storage is on **Cloudflare R2**, accessed through the S3-compatible API
 - `/admin/pending` Full list of PENDING signups, with a "link to plot" action.
 - `/admin/clients` All clients, searchable by name, plot number, CNIC. TanStack Table with pagination. "Create new client" button for the admin-created-client flow (see Authentication and Linking Flow above).
 - `/admin/clients/[id]` One client's profile, their plot, and all their documents. Upload new document here (title, category, file). Delete document. Edit client details.
-- `/admin/plots` Plot list (P-001 to P-360) with linked client status.
+- `/admin/plots` Plot list (R-01..R-322, L-01..L-37) with linked client status.
 
 ### Client (CLIENT role, ACTIVE status only)
 - `/client/dashboard` Their plot info and a document count summary by category.
@@ -212,7 +213,7 @@ Enforce role AND status checks in middleware and in every server action. Never t
 `prisma/seed.ts` inserts only permanent structural data:
 
 - One admin user (email `admin@portal.com`, known dev password, hashed).
-- 360 plots, numbered `P-001` to `P-360`, all status SOLD, with varied sizes/blocks.
+- The real plot scheme from the official member list: `R-01`..`R-322` and `L-01`..`L-37` (359 plots), all status SOLD except `R-248`, which is `CANCELLED`. Plots carry no size/block — those fields were removed. Re-running the seed deletes any unlinked plots (e.g. the old `P-001`..`P-360` placeholders) and recreates the canonical set; linked plots are left untouched.
 
 Dummy clients, pending signups, and sample documents were used during Phases 3-5 to test the verification/upload/view flows end to end, then deliberately removed from both the database and `seed.ts` once real client onboarding began. Re-running the seed script must never recreate fake clients. Real clients are now added one at a time, either via self-signup + admin link, or via the admin-create-client flow.
 
@@ -236,7 +237,7 @@ Verify each phase before the next.
 
 1. **Setup**: Next.js, TypeScript, Prisma, a Postgres database (Supabase or Neon), a private Cloudflare R2 bucket, the `lib/storage.ts` wrapper, Tailwind, shadcn/ui, Auth.js. Define schema, first migration.
 2. **Auth and roles**: admin login (seeded), client signup, login, role and status based redirects, middleware protection, pending-verification screen.
-3. **Plots and clients**: seed 360 plots, client management UI, the pending verification and link-to-plot flow.
+3. **Plots and clients**: seed the real plots (R-01..R-322, L-01..L-37), client management UI, the pending verification and link-to-plot flow.
 4. **Document upload**: admin upload via signed direct-to-storage URLs, category and title, document list on client profile, delete.
 5. **Client document view**: client documents page, category filter, view and download via short-lived signed URLs, strict ownership checks.
 6. **Dashboard and search**: admin dashboard stats, pending widget, client search.

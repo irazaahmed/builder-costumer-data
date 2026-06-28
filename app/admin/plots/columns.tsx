@@ -7,16 +7,12 @@ import { Badge } from "@/components/ui/badge";
 export interface PlotRow {
   id: string;
   plotNumber: string;
-  block: string | null;
-  size: string | null;
   status: string;
   client: { id: string; fullName: string } | null;
 }
 
 export const columns: ColumnDef<PlotRow>[] = [
   { accessorKey: "plotNumber", header: "Plot" },
-  { accessorKey: "block", header: "Block", cell: ({ row }) => row.original.block ?? "—" },
-  { accessorKey: "size", header: "Size", cell: ({ row }) => row.original.size ?? "—" },
   { accessorKey: "status", header: "Status" },
   {
     id: "client",

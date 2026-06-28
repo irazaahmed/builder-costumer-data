@@ -70,6 +70,8 @@ function CreateClientForm({
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
   const [cnic, setCnic] = useState("");
+  const [address, setAddress] = useState("");
+  const [membershipDate, setMembershipDate] = useState("");
   const [plotId, setPlotId] = useState("");
 
   const created = state?.success === true;
@@ -167,6 +169,25 @@ function CreateClientForm({
                 placeholder="42101-1234567-1"
                 value={cnic}
                 onChange={(e) => setCnic(e.target.value)}
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="membershipDate">Date of membership (optional)</Label>
+              <Input
+                id="membershipDate"
+                name="membershipDate"
+                type="date"
+                value={membershipDate}
+                onChange={(e) => setMembershipDate(e.target.value)}
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="address">Address (optional)</Label>
+              <Input
+                id="address"
+                name="address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
               />
             </div>
             <div className="flex flex-col gap-2">

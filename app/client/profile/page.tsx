@@ -39,8 +39,13 @@ export default async function ClientProfilePage() {
     { label: "CNIC", value: client.cnic ?? "—" },
     { label: "Phone", value: client.phone ?? "—" },
     { label: "Plot Number", value: client.plot.plotNumber },
-    { label: "Block", value: client.plot.block ?? "—" },
-    { label: "Plot Size", value: client.plot.size ?? "—" },
+    {
+      label: "Date of Membership",
+      value: client.membershipDate
+        ? client.membershipDate.toLocaleDateString("en-GB")
+        : "—",
+    },
+    { label: "Address", value: client.address ?? "—" },
   ];
 
   return (
@@ -68,14 +73,10 @@ export default async function ClientProfilePage() {
               <span className="rounded-full bg-black/15 px-3 py-0.5 font-medium">
                 Plot {client.plot.plotNumber}
               </span>
-              {client.plot.block && (
+              {client.membershipDate && (
                 <span className="rounded-full bg-black/15 px-3 py-0.5">
-                  Block {client.plot.block}
-                </span>
-              )}
-              {client.plot.size && (
-                <span className="rounded-full bg-black/15 px-3 py-0.5">
-                  {client.plot.size}
+                  Member since{" "}
+                  {client.membershipDate.toLocaleDateString("en-GB")}
                 </span>
               )}
             </div>

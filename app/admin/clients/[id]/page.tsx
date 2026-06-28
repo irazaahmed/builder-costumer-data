@@ -48,8 +48,9 @@ export default async function ClientProfilePage({
         <h1 className="text-2xl font-semibold">{client.fullName}</h1>
         <p className="text-sm text-muted-foreground">
           Plot {client.plot.plotNumber}
-          {client.plot.block ? ` · Block ${client.plot.block}` : ""}
-          {client.plot.size ? ` · ${client.plot.size}` : ""}
+          {client.membershipDate
+            ? ` · Member since ${client.membershipDate.toLocaleDateString("en-GB")}`
+            : ""}
         </p>
       </div>
 
@@ -65,6 +66,12 @@ export default async function ClientProfilePage({
               fullName={client.fullName}
               cnic={client.cnic}
               phone={client.phone}
+              address={client.address}
+              membershipDate={
+                client.membershipDate
+                  ? client.membershipDate.toISOString().slice(0, 10)
+                  : null
+              }
             />
           </CardContent>
         </Card>

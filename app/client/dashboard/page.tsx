@@ -113,14 +113,10 @@ export default async function ClientDashboardPage() {
             <span className="rounded-full bg-black/15 px-3 py-1 font-medium">
               Plot {client.plot.plotNumber}
             </span>
-            {client.plot.block && (
+            {client.membershipDate && (
               <span className="rounded-full bg-black/15 px-3 py-1">
-                Block {client.plot.block}
-              </span>
-            )}
-            {client.plot.size && (
-              <span className="rounded-full bg-black/15 px-3 py-1">
-                {client.plot.size}
+                Member since{" "}
+                {client.membershipDate.toLocaleDateString("en-GB")}
               </span>
             )}
           </div>

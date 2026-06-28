@@ -13,11 +13,16 @@ export function EditClientForm({
   fullName,
   cnic,
   phone,
+  address,
+  membershipDate,
 }: {
   clientId: string;
   fullName: string;
   cnic: string | null;
   phone: string | null;
+  address: string | null;
+  // ISO date (YYYY-MM-DD) for the native date input, or null.
+  membershipDate: string | null;
 }) {
   const [state, action, pending] = useActionState(updateClientAction, initialState);
 
@@ -35,6 +40,19 @@ export function EditClientForm({
       <div className="flex flex-col gap-2">
         <Label htmlFor="phone">Phone</Label>
         <Input id="phone" name="phone" defaultValue={phone ?? ""} />
+      </div>
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="membershipDate">Date of membership</Label>
+        <Input
+          id="membershipDate"
+          name="membershipDate"
+          type="date"
+          defaultValue={membershipDate ?? ""}
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="address">Address</Label>
+        <Input id="address" name="address" defaultValue={address ?? ""} />
       </div>
       {state?.error && <p className="text-sm text-destructive">{state.error}</p>}
       {state?.success && <p className="text-sm text-muted-foreground">Saved.</p>}

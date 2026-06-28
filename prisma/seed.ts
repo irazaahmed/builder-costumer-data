@@ -2,9 +2,29 @@ import { prisma } from "../lib/prisma";
 import { hashPassword } from "../lib/password";
 import { Role, UserStatus } from "../lib/generated/prisma/client";
 
-const TOTAL_PLOTS = 360;
-const BLOCKS = ["A", "B", "C", "D"];
-const SIZES = ["120 sq yd", "150 sq yd", "200 sq yd", "240 sq yd"];
+// Real plot scheme for the Surjani Sector 12 project, taken from the official
+// member list: R-01..R-322 (residential) and L-01..L-37. Numbers below 10 are
+// written with a leading zero (R-01), matching the source document.
+const R_PLOTS = 322;
+const L_PLOTS = 37;
+
+// R-248 is recorded as "Cancelled" in the member list — it exists as a plot but
+// is not sold/linked to anyone.
+const CANCELLED_PLOTS = new Set(["R-248"]);
+
+function pad(n: number) {
+  return String(n).padStart(2, "0");
+}
+
+function buildPlots() {
+  const numbers: string[] = [];
+  for (let i = 1; i <= R_PLOTS; i++) numbers.push(`R-${pad(i)}`);
+  for (let i = 1; i <= L_PLOTS; i++) numbers.push(`L-${pad(i)}`);
+  return numbers.map((plotNumber) => ({
+    plotNumber,
+    status: CANCELLED_PLOTS.has(plotNumber) ? "CANCELLED" : "SOLD",
+  }));
+}
 
 async function seedAdmin() {
   console.log("Seeding admin user...");
@@ -23,13 +43,14 @@ async function seedAdmin() {
 }
 
 async function seedPlots() {
-  console.log(`Seeding ${TOTAL_PLOTS} plots...`);
-  const plotData = Array.from({ length: TOTAL_PLOTS }, (_, i) => ({
-    plotNumber: `P-${String(i + 1).padStart(3, "0")}`,
-    size: SIZES[i % SIZES.length],
-    block: BLOCKS[i % BLOCKS.length],
-    status: "SOLD",
-  }));
+  const plotData = buildPlots();
+  console.log(`Seeding ${plotData.length} plots...`);
+
+  // Clear out any unlinked plots from an earlier scheme (e.g. the old
+  // P-001..P-360 placeholders) so re-running doesn't leave stale numbers.
+  // Plots already linked to a real client are left untouched.
+  await prisma.plot.deleteMany({ where: { client: null } });
+
   await prisma.plot.createMany({ data: plotData, skipDuplicates: true });
 }
 

@@ -19,7 +19,7 @@ export default async function ClientsPage() {
       include: { plot: true, _count: { select: { documents: true } } },
     }),
     prisma.plot.findMany({
-      where: { client: null },
+      where: { client: null, status: { not: "CANCELLED" } },
       orderBy: { plotNumber: "asc" },
       select: { id: true, plotNumber: true },
     }),

@@ -37,6 +37,11 @@ yarn-error.log*
 # vercel
 .vercel
 
+# private member data (real names, CNICs, addresses) — never commit
+List of Members.doc
+*.doc
+*.docx
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

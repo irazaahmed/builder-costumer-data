@@ -41,24 +41,24 @@ enum UserStatus {
 }
 
 model Client {
-  id        String   @id @default(cuid())
-  user      User     @relation(fields: [userId], references: [id])
-  userId    String   @unique
-  fullName  String
-  cnic      String?
-  phone     String?
-  plot      Plot     @relation(fields: [plotId], references: [id])
-  plotId    String   @unique
-  documents Document[]
-  linkedBy  String   // admin user id who performed the link action
-  createdAt DateTime @default(now())
+  id             String     @id @default(cuid())
+  user           User       @relation(fields: [userId], references: [id])
+  userId         String     @unique
+  fullName       String
+  cnic           String?
+  phone          String?
+  address        String?
+  membershipDate DateTime?
+  plot           Plot       @relation(fields: [plotId], references: [id])
+  plotId         String     @unique
+  documents      Document[]
+  linkedBy       String // admin user id who performed the link action
+  createdAt      DateTime   @default(now())
 }
 
 model Plot {
   id         String  @id @default(cuid())
-  plotNumber String  @unique // e.g. P-001 to P-360
-  size       String? // e.g. "120 sq yd"
-  block      String?
+  plotNumber String  @unique // e.g. R-01..R-322, L-01..L-37
   status     String  @default("SOLD")
   client     Client?
 }
