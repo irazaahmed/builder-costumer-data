@@ -70,19 +70,38 @@ export function UploadDocumentForm({ clientId }: { clientId: string }) {
       mimeType: file.type,
     });
 
-    if (requestResult.error || !requestResult.url || !requestResult.key) {
+    if (
+      requestResult.error ||
+      !requestResult.url ||
+      !requestResult.fields ||
+      !requestResult.key
+    ) {
       setError(requestResult.error ?? "Failed to prepare upload.");
       setPending(false);
       return;
     }
 
-    const response = await fetch(requestResult.url, {
-      method: "PUT",
-      headers: { "Content-Type": file.type },
-      body: file,
-    });
+    const formData = new FormData();
+    for (const [field, value] of Object.entries(requestResult.fields)) {
+      formData.append(field, value);
+    }
+    formData.append("file", file);
 
-    if (!response.ok) {
+    let response: Response;
+    let responseJson: { error?: { message?: string } } | null = null;
+    try {
+      response = await fetch(requestResult.url, {
+        method: "POST",
+        body: formData,
+      });
+      responseJson = await response.json().catch(() => null);
+    } catch {
+      setError("Upload to storage failed, please try again.");
+      setPending(false);
+      return;
+    }
+
+    if (!response.ok || responseJson?.error) {
       setError("Upload to storage failed, please try again.");
       setPending(false);
       return;

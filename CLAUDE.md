@@ -46,18 +46,18 @@ Object storage        -> the actual PDF files, in a PRIVATE bucket
 - **Next.js 15** with App Router and Server Actions
 - **TypeScript** (strict mode)
 - **PostgreSQL** for the database (Supabase or Neon, both fine, free tier is enough for text data)
-- **Cloudflare R2** for file storage (the PDFs) in a PRIVATE bucket
+- **Cloudinary** for file storage (the PDFs), private "raw" resources only
 - **Prisma ORM** for the database layer
 - **Auth.js (NextAuth v5)** for authentication and role-based access
 - **Tailwind CSS + shadcn/ui** for UI
 - **Zod** for all server-side validation
 - **TanStack Table** for admin client/document tables
 - **react-dropzone** for the admin upload UI
-- **@aws-sdk/client-s3** and **@aws-sdk/s3-request-presigner** for R2 (R2 is S3-compatible)
+- **cloudinary** (official Node SDK) for signed direct-to-storage uploads and signed downloads
 
-Storage choice reasoning: the database holds only text (clients, plots, document metadata), so any free Postgres works. The actual PDF files go to **Cloudflare R2** because it has a large free tier (10 GB), zero egress fees (clients viewing documents costs nothing), and very cheap storage beyond free ($0.015/GB/month). R2 is S3-compatible, so it is used through the standard AWS S3 SDK pointed at the R2 endpoint.
+Storage choice reasoning: the database holds only text (clients, plots, document metadata), so any free Postgres works. The actual PDF files go to **Cloudinary** because its free tier needs no payment card on file (unlike Cloudflare R2, which requires one to enable R2 even on the free tier). Files are stored as `resource_type: "raw"` with delivery `type: "private"`, so they're never processed by Cloudinary's image pipeline and are only ever reachable via a signed URL.
 
-**Critical**: all storage access (upload signing, download signing, delete) must go through ONE wrapper module `lib/storage.ts`. The rest of the app never talks to R2 directly. This keeps the provider swappable. The wrapper exposes `getUploadUrl()`, `getDownloadUrl()`, and `deleteFile()`.
+**Critical**: all storage access (upload signing, download signing, delete) must go through ONE wrapper module `lib/storage.ts`. The rest of the app never talks to Cloudinary directly. This keeps the provider swappable. The wrapper exposes `getUploadUrl()`, `getDownloadUrl()`, and `deleteFile()`.
 
 ---
 
@@ -168,19 +168,19 @@ Design note: the `category` field is deliberate. With 360 clients each having mu
 
 ## File Storage and Security (Non-Negotiable)
 
-All file storage is on **Cloudflare R2**, accessed through the S3-compatible API via `lib/storage.ts`. The R2 bucket is private; access is only ever through presigned URLs.
+All file storage is on **Cloudinary**, as private `resource_type: "raw"` objects, accessed via `lib/storage.ts`. Access is only ever through signed URLs.
 
-1. The R2 bucket MUST be **private**. No public access, no public bucket URL.
-2. Uploads use **presigned upload URLs (S3 PutObject)**, so large scanned PDFs do not pass through the Next.js server memory. The flow:
+1. Every object MUST use delivery `type: "private"`. Never `"upload"` (public) and never `"authenticated"` (requires Cloudinary's paid Advanced plan for token/cookie access control).
+2. Uploads use a **signed direct-to-Cloudinary POST**, so large scanned PDFs do not pass through the Next.js server memory. The flow:
    - Admin picks a client and a file.
-   - Server action validates admin role, then `lib/storage.ts` generates a presigned PUT URL for key `clients/{clientId}/{category}/{timestamp}-{filename}`.
-   - Browser uploads the file directly to R2 using that URL.
-   - On success, server saves the `Document` row with the `fileKey` (the R2 object key).
-3. Viewing/downloading uses **short-lived presigned GET URLs** (expire in 5 to 10 minutes). Never store or expose permanent public links.
-4. Every download request re-checks: is this user allowed to access this document? A client may only get a presigned URL for a document whose `clientId` matches their own client id.
+   - Server action validates admin role, then `lib/storage.ts` generates signed upload params (`getUploadUrl`) for key/`public_id` `clients/{clientId}/{category}/{timestamp}-{filename}`.
+   - Browser builds a `FormData` (the file plus the signed fields) and POSTs it directly to Cloudinary using that signed data.
+   - On success, server saves the `Document` row with the `fileKey` (the Cloudinary `public_id`).
+3. Viewing/downloading uses **short-lived signed URLs** (`expires_at` 5 to 10 minutes out). Never store or expose permanent public links.
+4. Every download request re-checks: is this user allowed to access this document? A client may only get a signed URL for a document whose `clientId` matches their own client id.
 5. Restrict uploads to PDF (and optionally images) via mime-type and size validation on the server, not just the client.
 
-`lib/storage.ts` is built on `@aws-sdk/client-s3` configured with the R2 endpoint (`https://{accountid}.r2.cloudflarestorage.com`), the R2 access key id, and secret. It exposes `getUploadUrl()`, `getDownloadUrl()`, and `deleteFile()`. Nothing else in the app touches R2 directly, so swapping providers later means rewriting only this one file.
+`lib/storage.ts` is built on the `cloudinary` SDK, configured with `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, and `CLOUDINARY_API_SECRET`. It exposes `getUploadUrl()`, `getDownloadUrl()`, and `deleteFile()`. Nothing else in the app touches Cloudinary directly, so swapping providers later means rewriting only this one file.
 
 ---
 
@@ -235,7 +235,7 @@ Dummy clients, pending signups, and sample documents were used during Phases 3-5
 
 Verify each phase before the next.
 
-1. **Setup**: Next.js, TypeScript, Prisma, a Postgres database (Supabase or Neon), a private Cloudflare R2 bucket, the `lib/storage.ts` wrapper, Tailwind, shadcn/ui, Auth.js. Define schema, first migration.
+1. **Setup**: Next.js, TypeScript, Prisma, a Postgres database (Supabase or Neon), a private Cloudinary account (raw resources), the `lib/storage.ts` wrapper, Tailwind, shadcn/ui, Auth.js. Define schema, first migration.
 2. **Auth and roles**: admin login (seeded), client signup, login, role and status based redirects, middleware protection, pending-verification screen.
 3. **Plots and clients**: seed the real plots (R-01..R-322, L-01..L-37), client management UI, the pending verification and link-to-plot flow.
 4. **Document upload**: admin upload via signed direct-to-storage URLs, category and title, document list on client profile, delete.
@@ -252,16 +252,16 @@ The system has three separate cloud pieces plus a domain. Keep them clearly sepa
 ```
 App hosting    -> Vercel (Next.js runs here)
 Database       -> Supabase or Neon (Postgres, cloud)
-File storage   -> Cloudflare R2 (private bucket, cloud)
+File storage   -> Cloudinary (private "raw" resources, cloud)
 Domain         -> Hostinger (only the domain name)
 ```
 
-- **Vercel (now)**: deploy the Next.js app. Set env vars: `DATABASE_URL` (Postgres), `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, `R2_ENDPOINT`, and the Auth.js secrets. Run migrations on deploy.
-- **Cloudflare R2**: create a private bucket, generate S3 API credentials (access key + secret), note the account-specific endpoint. The free tier (10 GB storage, zero egress) covers a large amount of documents at no cost.
+- **Vercel (now)**: deploy the Next.js app. Set env vars: `DATABASE_URL` (Postgres), `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`, and the Auth.js secrets. Run migrations on deploy.
+- **Cloudinary**: create an account (no payment card required for the free tier — this is why it was chosen over Cloudflare R2, which requires one). Note the cloud name, API key, and API secret from the dashboard. All uploads/downloads/deletes go through `resource_type: "raw"` + `type: "private"`.
 - **Database**: a free Postgres tier is enough since it only stores text. On Supabase free tier, be aware projects pause after a week of inactivity, so for the live client demo use a plan that stays awake, or use Neon.
-- **Hostinger (later)**: buy ONLY the domain here. Do NOT use Hostinger shared hosting to run the Next.js app, it is built for PHP/WordPress and will not run this app properly. Point the Hostinger domain's DNS to Vercel. The app stays on Vercel, the database stays on its provider, and storage stays on R2. Nothing about the storage or database changes when the domain is added.
+- **Hostinger (later)**: buy ONLY the domain here. Do NOT use Hostinger shared hosting to run the Next.js app, it is built for PHP/WordPress and will not run this app properly. Point the Hostinger domain's DNS to Vercel. The app stays on Vercel, the database stays on its provider, and storage stays on Cloudinary. Nothing about the storage or database changes when the domain is added.
 
-Keep all secrets in env vars, never hardcoded. Because all storage goes through `lib/storage.ts`, moving off R2 later (if ever needed) means editing only that one file.
+Keep all secrets in env vars, never hardcoded. Because all storage goes through `lib/storage.ts`, moving off Cloudinary later (if ever needed) means editing only that one file.
 
 ---
 
@@ -293,13 +293,13 @@ This project has a project-level Claude Code setup so that patterns stay consist
 
 **Subagents** (`.claude/agents/`):
 - `db-architect` — Prisma schema, migrations, relations, indexes, seed data shape.
-- `security-auditor` — audits auth, role/status checks, access control, and presigned URL ownership checks. The strictest reviewer; read-only, reports findings.
-- `storage-engineer` — Cloudflare R2 integration, `lib/storage.ts`, presigned upload/download URLs, direct-to-storage uploads.
+- `security-auditor` — audits auth, role/status checks, access control, and signed URL ownership checks. The strictest reviewer; read-only, reports findings.
+- `storage-engineer` — Cloudinary integration, `lib/storage.ts`, signed upload/download URLs, direct-to-storage uploads.
 - `ui-builder` — admin/client panel UI, shadcn/ui, Tailwind, TanStack Table; always reads branding from the central config.
 
 **Skills** (`.claude/skills/`):
 - `prisma-conventions` — schema naming, enum usage, relation rules matching this project's data model.
-- `r2-storage-pattern` — exact presigned PUT upload / presigned GET download flow and object key format.
+- `r2-storage-pattern` — exact signed upload / signed download flow (Cloudinary, private "raw" resources) and object key format. Name is historical, from when the project used Cloudflare R2.
 - `access-control-rules` — session/role/status checks required everywhere; client data scoped by session-derived `clientId` only.
 - `shadcn-admin-table` — reusable TanStack Table + shadcn/ui setup (search, pagination, filters) for admin list pages.
 - `server-action-pattern` — the template every mutation follows: auth check, then Zod validation, then logic, then a consistent return shape.
@@ -312,4 +312,4 @@ This project has a project-level Claude Code setup so that patterns stay consist
 
 **Rules:**
 - When building a new feature, load the relevant skill(s) first and follow their patterns — don't improvise a different approach for something a skill already defines.
-- When work is heavy or domain-specific (schema changes, storage/R2 logic, UI/admin tables, or anything touching access control), hand it to the matching subagent instead of doing it inline, so the main conversation's context stays light.
+- When work is heavy or domain-specific (schema changes, storage/Cloudinary logic, UI/admin tables, or anything touching access control), hand it to the matching subagent instead of doing it inline, so the main conversation's context stays light.

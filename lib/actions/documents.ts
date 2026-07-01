@@ -55,6 +55,7 @@ function validateMimeAndSize(
 
 export interface RequestUploadResult extends DocumentActionState {
   url?: string;
+  fields?: Record<string, string>;
   key?: string;
   fileName?: string;
   fileSize?: number;
@@ -103,11 +104,12 @@ export async function requestUploadAction(input: {
     }
 
     const key = buildDocumentKey(clientId, category, fileName);
-    const { url } = await getUploadUrl({ key, contentType: mimeType });
+    const { url, fields } = await getUploadUrl({ key, contentType: mimeType });
 
     return {
       success: true,
       url,
+      fields,
       key,
       fileName,
       fileSize,

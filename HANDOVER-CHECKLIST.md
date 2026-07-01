@@ -19,7 +19,7 @@ Aage ka tareeqa is par thoda badalta hai:
 ## 1. Client Se Yeh 3 Cheezein Lo (Pehle Din)
 
 - [ ] **1 dedicated business Gmail** (client ki personal nahi — naya banao, jaise `lodhibrothers.portal@gmail.com`). Isi se saare accounts banenge.
-- [ ] **1 phone number** — Cloudflare / GitHub / Hostinger 2FA aur verification maangte hain.
+- [ ] **1 phone number** — GitHub / Hostinger 2FA aur verification maangte hain.
 - [ ] **1 payment card (debit/credit)** — domain ke liye lazmi; Vercel Pro / paid plans ke liye bhi.
 - [ ] Har account ka **strong password** set karo + jahan mumkin ho **2FA on** karo. Sab kuch ek **handover document** (ya password manager) mein likho.
 
@@ -33,22 +33,19 @@ Aage ka tareeqa is par thoda badalta hai:
 - [ ] **Scenario B:** repo client ke account par transfer karo, aap ko access ki zaroorat nahi.
 - [ ] Confirm: `main` branch par latest code mojood hai.
 
-### B. Cloudflare R2 (PDF storage)
-- [ ] Client Gmail se Cloudflare account banao.
-- [ ] **R2 enable** karo (card on file maang sakta hai — free tier mein bhi).
-- [ ] Ek **private bucket** banao (public access OFF rakho).
-- [ ] **R2 API token / S3 credentials** generate karo. Note karo:
-  - `R2_ACCOUNT_ID`
-  - `R2_ACCESS_KEY_ID`
-  - `R2_SECRET_ACCESS_KEY`
-  - `R2_BUCKET_NAME` (bucket ka naam)
-  - `R2_ENDPOINT` → `https://<account-id>.r2.cloudflarestorage.com`
+### B. Cloudinary (PDF storage)
+- [ ] Client Gmail se Cloudinary account banao (**card nahi chahiye** — isi liye R2 ki jagah Cloudinary chuna gaya).
+- [ ] Dashboard se seedha 3 values note kar lo:
+  - `CLOUDINARY_CLOUD_NAME`
+  - `CLOUDINARY_API_KEY`
+  - `CLOUDINARY_API_SECRET`
+- [ ] Koi bucket banane ki zaroorat nahi — app khud har file `resource_type: raw` + `type: private` se upload karta hai, is liye files hamesha private rehti hain.
 
-### C. Neon (PostgreSQL database)
-- [ ] Client Gmail se Neon account banao.
-- [ ] Naya **project/database** banao.
-- [ ] **Connection string** lo → yeh `DATABASE_URL` aur `DIRECT_URL` dono ke liye use hogi.
-- [ ] (Behtar) aisa plan chuno jo inactivity par pause na ho — live client demo ke liye.
+### C. Supabase (PostgreSQL database)
+- [ ] Client Gmail se Supabase account banao.
+- [ ] Naya **project** banao.
+- [ ] **Connection string** lo (Transaction pooler port 6543 → `DATABASE_URL`; Session pooler port 5432 → `DIRECT_URL`).
+- [ ] (Yaad rakho) free tier project ek hafte ki inactivity ke baad **pause** ho sakta hai — live client demo se pehle project khol kar confirm kar lena, ya paid plan lena.
 
 ### D. Vercel (app hosting)
 - [ ] Client Gmail se Vercel account banao.
@@ -69,13 +66,11 @@ Aage ka tareeqa is par thoda badalta hai:
 
 | Variable | Value kahan se |
 |----------|----------------|
-| `DATABASE_URL` | Neon connection string |
-| `DIRECT_URL` | Neon connection string (wahi/direct) |
-| `R2_ACCOUNT_ID` | Cloudflare R2 |
-| `R2_ACCESS_KEY_ID` | Cloudflare R2 |
-| `R2_SECRET_ACCESS_KEY` | Cloudflare R2 |
-| `R2_BUCKET_NAME` | Cloudflare R2 (bucket naam) |
-| `R2_ENDPOINT` | `https://<account-id>.r2.cloudflarestorage.com` |
+| `DATABASE_URL` | Supabase connection string (Transaction pooler, port 6543) |
+| `DIRECT_URL` | Supabase connection string (Session pooler, port 5432) |
+| `CLOUDINARY_CLOUD_NAME` | Cloudinary dashboard |
+| `CLOUDINARY_API_KEY` | Cloudinary dashboard |
+| `CLOUDINARY_API_SECRET` | Cloudinary dashboard |
 | `AUTH_SECRET` | **Naya** generate karo → `npx auth secret` (ya `openssl rand -base64 32`) |
 
 - [ ] Sab variables **Production** (aur chahein to Preview) environment ke liye add kiye.
@@ -83,7 +78,7 @@ Aage ka tareeqa is par thoda badalta hai:
 
 ---
 
-## 4. Database Setup + Seed (Naye Neon Par)
+## 4. Database Setup + Seed (Naye Supabase Par)
 
 - [ ] Vercel deploy par migrations khud chalti hain (`package.json` ka build: `prisma migrate deploy`). Confirm deploy logs mein migration successful.
 - [ ] **Seed chalao** (sirf structural data — 1 admin user + 360 plots):
@@ -117,7 +112,7 @@ Aage ka tareeqa is par thoda badalta hai:
 
 - [ ] Home page khulta hai (domain par).
 - [ ] Admin login → dashboard, clients, plots, settings sab theek.
-- [ ] Naya document upload → R2 (client ke bucket) mein gaya.
+- [ ] Naya document upload → Cloudinary (private raw storage) mein gaya.
 - [ ] Client login → sirf apne documents → view/download link kaam karta hai aur expire hota hai.
 - [ ] Light/dark theme, mobile view theek.
 - [ ] Admin **change password** kaam karta hai.
@@ -128,10 +123,10 @@ Aage ka tareeqa is par thoda badalta hai:
 
 Ek file/sheet mein client ko yeh sab do:
 
-- [ ] Saare account logins (Gmail, GitHub, Cloudflare, Neon, Vercel, Hostinger) — email + password + 2FA recovery codes.
+- [ ] Saare account logins (Gmail, GitHub, Cloudinary, Supabase, Vercel, Hostinger) — email + password + 2FA recovery codes.
 - [ ] Domain ki maloomat aur renewal date.
 - [ ] Admin portal ka login (email + password).
-- [ ] Short note: kaun si service kis cheez ke liye hai (R2 = files, Neon = data, Vercel = app, Hostinger = domain).
+- [ ] Short note: kaun si service kis cheez ke liye hai (Cloudinary = files, Supabase = data, Vercel = app, Hostinger = domain).
 - [ ] **Scenario A:** likho ke maintenance/updates aap (developer) karenge, aur aap har account mein collaborator hain.
 
 ---
@@ -139,8 +134,8 @@ Ek file/sheet mein client ko yeh sab do:
 ## 9. Yaad Rakhne Wali Baatein
 
 - **`.env` kabhi commit nahi** — secrets sirf Vercel ke environment variables mein.
-- **Free tier:** R2 10 GB (+ free downloads), Neon 0.5 GB text — dono lambe arse kaafi. Recurring kharcha sirf domain (~$12/saal) aur (recommended) Vercel Pro (~$20/mo).
-- **Storage swappable:** agar kabhi R2 chhodna ho, sirf `lib/storage.ts` badalna hoga.
+- **Free tier:** Cloudinary card ke bina free plan (koi hard "10GB" jaisi guarantee nahi, lekin chote scanned PDFs ke liye kaafi arse chalega), Supabase 0.5 GB text — dono lambe arse kaafi. Recurring kharcha sirf domain (~$12/saal) aur (recommended) Vercel Pro (~$20/mo). Card mil jaye to Cloudflare R2 (10 GB free, zero egress) par wapis switch karna bhi option rehta hai.
+- **Storage swappable:** agar kabhi Cloudinary chhodna ho, sirf `lib/storage.ts` badalna hoga.
 - **Rebrand swappable:** naam/color/logo sirf `lib/branding.ts` (+ `public/logo.svg`) se.
 
 ---
