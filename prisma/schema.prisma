@@ -45,6 +45,7 @@ model Client {
   user           User       @relation(fields: [userId], references: [id])
   userId         String     @unique
   fullName       String
+  fatherName     String?
   cnic           String?
   phone          String?
   address        String?

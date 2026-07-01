@@ -35,6 +35,7 @@ export default async function ClientProfilePage() {
 
   const fields = [
     { label: "Full Name", value: client.fullName },
+    { label: "Father's Name", value: client.fatherName ?? "—" },
     { label: "Email", value: session.user.email },
     { label: "CNIC", value: client.cnic ?? "—" },
     { label: "Phone", value: client.phone ?? "—" },

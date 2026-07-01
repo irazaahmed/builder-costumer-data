@@ -66,7 +66,7 @@ const signupSchema = z
     name: z.string().trim().min(2, "Name must be at least 2 characters."),
     email: z.string().trim().email("Please enter a valid email."),
     password: z.string().min(8, "Password must be at least 8 characters."),
-    phone: z.string().trim().min(7, "Please enter a valid phone number."),
+    phone: z.string().trim().optional(),
     claimedCnic: z.string().trim().optional(),
     claimedPlotNumber: z.string().trim().optional(),
   })
@@ -83,7 +83,7 @@ export async function signupAction(
     name: formData.get("name"),
     email: formData.get("email"),
     password: formData.get("password"),
-    phone: formData.get("phone"),
+    phone: formData.get("phone") || undefined,
     claimedCnic: formData.get("claimedCnic") || undefined,
     claimedPlotNumber: formData.get("claimedPlotNumber") || undefined,
   });

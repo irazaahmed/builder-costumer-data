@@ -11,6 +11,7 @@ const initialState: ClientActionState = {};
 export function EditClientForm({
   clientId,
   fullName,
+  fatherName,
   cnic,
   phone,
   address,
@@ -18,6 +19,7 @@ export function EditClientForm({
 }: {
   clientId: string;
   fullName: string;
+  fatherName: string | null;
   cnic: string | null;
   phone: string | null;
   address: string | null;
@@ -32,6 +34,10 @@ export function EditClientForm({
       <div className="flex flex-col gap-2">
         <Label htmlFor="fullName">Full name</Label>
         <Input id="fullName" name="fullName" defaultValue={fullName} required />
+      </div>
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="fatherName">Father&apos;s name (optional)</Label>
+        <Input id="fatherName" name="fatherName" defaultValue={fatherName ?? ""} />
       </div>
       <div className="flex flex-col gap-2">
         <Label htmlFor="cnic">CNIC</Label>

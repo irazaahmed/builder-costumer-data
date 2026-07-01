@@ -4,6 +4,7 @@ const NAV_LINKS = [
   { href: "/client/dashboard", label: "Dashboard" },
   { href: "/client/documents", label: "Documents" },
   { href: "/client/profile", label: "Profile" },
+  { href: "/client/settings", label: "Settings" },
 ];
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {

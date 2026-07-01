@@ -67,6 +67,7 @@ function CreateClientForm({
   const [state, action, pending] = useActionState(createClientAction, initialState);
 
   const [fullName, setFullName] = useState("");
+  const [fatherName, setFatherName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
@@ -124,6 +125,15 @@ function CreateClientForm({
               />
             </div>
             <div className="flex flex-col gap-2">
+              <Label htmlFor="fatherName">Father&apos;s name (optional)</Label>
+              <Input
+                id="fatherName"
+                name="fatherName"
+                value={fatherName}
+                onChange={(e) => setFatherName(e.target.value)}
+              />
+            </div>
+            <div className="flex flex-col gap-2">
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
@@ -152,13 +162,12 @@ function CreateClientForm({
               </p>
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="phone">Phone</Label>
+              <Label htmlFor="phone">Phone (optional)</Label>
               <Input
                 id="phone"
                 name="phone"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                required
               />
             </div>
             <div className="flex flex-col gap-2">

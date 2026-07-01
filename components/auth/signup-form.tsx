@@ -51,8 +51,8 @@ export function SignupForm() {
             />
           </div>
           <div className="flex flex-col gap-2">
-            <Label htmlFor="phone">Phone</Label>
-            <Input id="phone" name="phone" required autoComplete="tel" />
+            <Label htmlFor="phone">Phone (optional)</Label>
+            <Input id="phone" name="phone" autoComplete="tel" />
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="claimedCnic">CNIC</Label>

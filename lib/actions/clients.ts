@@ -82,6 +82,7 @@ export async function linkClientAction(
 const updateClientSchema = z.object({
   clientId: z.string().min(1),
   fullName: z.string().trim().min(2, "Name must be at least 2 characters."),
+  fatherName: z.string().trim().optional(),
   cnic: z.string().trim().optional(),
   phone: z.string().trim().optional(),
   address: z.string().trim().optional(),
@@ -100,6 +101,7 @@ export async function updateClientAction(
   const parsed = updateClientSchema.safeParse({
     clientId: formData.get("clientId"),
     fullName: formData.get("fullName"),
+    fatherName: formData.get("fatherName") || undefined,
     cnic: formData.get("cnic") || undefined,
     phone: formData.get("phone") || undefined,
     address: formData.get("address") || undefined,
@@ -128,9 +130,10 @@ export async function updateClientAction(
 
 const createClientSchema = z.object({
   fullName: z.string().trim().min(2, "Name must be at least 2 characters."),
+  fatherName: z.string().trim().optional(),
   email: z.string().trim().email("Please enter a valid email."),
   password: z.string().min(8, "Password must be at least 8 characters."),
-  phone: z.string().trim().min(7, "Please enter a valid phone number."),
+  phone: z.string().trim().optional(),
   cnic: z.string().trim().optional(),
   address: z.string().trim().optional(),
   membershipDate: z.coerce.date().optional(),
@@ -154,9 +157,10 @@ export async function createClientAction(
 
   const parsed = createClientSchema.safeParse({
     fullName: formData.get("fullName"),
+    fatherName: formData.get("fatherName") || undefined,
     email: formData.get("email"),
     password: formData.get("password"),
-    phone: formData.get("phone"),
+    phone: formData.get("phone") || undefined,
     cnic: formData.get("cnic") || undefined,
     address: formData.get("address") || undefined,
     membershipDate: formData.get("membershipDate") || undefined,
@@ -166,7 +170,7 @@ export async function createClientAction(
     return { error: parsed.error.issues[0]?.message ?? "Invalid input." };
   }
 
-  const { fullName, email, password, phone, cnic, address, membershipDate, plotId } =
+  const { fullName, fatherName, email, password, phone, cnic, address, membershipDate, plotId } =
     parsed.data;
 
   const [existingUser, plot] = await Promise.all([
@@ -205,6 +209,7 @@ export async function createClientAction(
         data: {
           userId: user.id,
           fullName,
+          fatherName,
           cnic,
           phone,
           address,

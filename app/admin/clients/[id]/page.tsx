@@ -64,6 +64,7 @@ export default async function ClientProfilePage({
             <EditClientForm
               clientId={client.id}
               fullName={client.fullName}
+              fatherName={client.fatherName}
               cnic={client.cnic}
               phone={client.phone}
               address={client.address}
