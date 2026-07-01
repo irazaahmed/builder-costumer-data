@@ -147,15 +147,15 @@ Documents 5 categories mein munazzam (organized) hain taake dhoondhna aasaan ho:
 ### Database (Text Data — Maloomat)
 | Cheez | Technology | Kaam |
 |-------|-----------|------|
-| Database | **PostgreSQL** (Neon par hosted) | Sirf **text** data: users, clients, plots, document ki maloomat (kis ka, kaun sa plot, title, category, file ka reference) |
+| Database | **PostgreSQL** (Supabase par hosted) | Sirf **text** data: users, clients, plots, document ki maloomat (kis ka, kaun sa plot, title, category, file ka reference) |
 
 **Aham:** Database mein **PDF file nahi** rakhi jaati — sirf yeh maloomat ke "yeh document is client ka hai, aur asal file storage mein yahan padi hai." Isse database halka aur tez rehta hai.
 
 ### File Storage (Asal PDF Documents)
 | Cheez | Technology | Kaam |
 |-------|-----------|------|
-| Storage | **Cloudflare R2** (private bucket) | Asal PDF files yahan mahfooz rehti hain |
-| Access | **AWS S3 SDK + presigned URLs** | Temporary, expire hone wale links se hi access |
+| Storage | **Cloudinary** (private "raw" resources) | Asal PDF files yahan mahfooz rehti hain, kabhi public nahi |
+| Access | **Signed direct upload/download URLs** | Temporary, expire hone wale links se hi access |
 
 Saara storage ka kaam ek hi file `lib/storage.ts` se hota hai — agar future mein storage provider badalna ho to sirf yeh ek file change hogi, baaqi app waisi ki waisi rahegi.
 
@@ -163,11 +163,11 @@ Saara storage ka kaam ek hi file `lib/storage.ts` se hota hai — agar future me
 | Hissa | Kahan |
 |-------|-------|
 | App (website) | **Vercel** |
-| Database | **Neon** (PostgreSQL cloud) |
-| File storage | **Cloudflare R2** |
+| Database | **Supabase** (PostgreSQL cloud) |
+| File storage | **Cloudinary** |
 | Domain | **Hostinger** (sirf domain naam — DNS Vercel par point hoga) |
 
-> Yeh 4 alag cloud pieces hain. App Vercel par chalti hai, data Neon mein, files R2 mein, aur domain Hostinger se aata hai. Inhe alag rakhna professional aur scalable design hai.
+> Yeh 4 alag cloud pieces hain. App Vercel par chalti hai, data Supabase mein, files Cloudinary mein, aur domain Hostinger se aata hai. Inhe alag rakhna professional aur scalable design hai.
 
 ---
 
@@ -177,7 +177,7 @@ Saara storage ka kaam ek hi file `lib/storage.ts` se hota hai — agar future me
 1. Admin client choose karke PDF select karta hai.
 2. Server check karta hai ke yeh waqai Admin hai.
 3. Server ek temporary "upload link" banata hai.
-4. File **seedha browser se R2 storage** mein chali jaati hai (server ki memory se nahi guzarti — isliye badi scanned PDFs bhi aaram se).
+4. File **seedha browser se Cloudinary storage** mein chali jaati hai (server ki memory se nahi guzarti — isliye badi scanned PDFs bhi aaram se).
 5. Kaamyaab upload ke baad database mein sirf document ki maloomat (reference) save hoti hai.
 
 **View/Download (Client):**
@@ -192,16 +192,15 @@ Saara storage ka kaam ek hi file `lib/storage.ts` se hota hai — agar future me
 
 > Shuruaat mein yeh poora system **bilkul free** chalaaya ja sakta hai. Neeche har service ki free limit di hai.
 
-### Cloudflare R2 (PDF Storage) — Sab Se Faraakh Free Tier
+### Cloudinary (PDF Storage) — Card Ke Bina Free
 | Cheez | Free Limit |
 |-------|-----------|
-| Storage | **10 GB free** har mahine |
-| Download (egress) | **Bilkul free, unlimited** — clients jitni baar bhi document dekhein, koi kharcha nahi |
-| Operations | 10 lakh (1M) writes + 1 crore (10M) reads / month free |
+| Card zaroori? | **Nahi** — yehi wajah hai ke Cloudflare R2 ki jagah Cloudinary chuna gaya (R2 free tier ke liye bhi card maangta hai) |
+| Storage/bandwidth | Free "credits" based plan (hard "10 GB" jaisi guarantee nahi, lekin chote scanned PDFs ke liye kaafi arsa chalega) |
 
-**Iska matlab aap ke liye:** Ek scanned legal PDF tipikal **0.5–2 MB** hoti hai. 10 GB mein **kai hazaar documents** aa jaati hain. 360 clients ke liye yeh free tier kaafi arsa kaafi rahega. 10 GB se upar sirf **$0.015 / GB / month** (yaani ~1 GB ka 4 rupay mahina) — bohat sasta.
+**Iska matlab aap ke liye:** Ek scanned legal PDF tipikal **0.5–2 MB** hoti hai — 360 clients ke chote documents ke liye free tier shuruaat mein kaafi hai. Zyada volume hone par ya card mil jaane par Cloudflare R2 (10 GB free, zero egress) par switch karna bhi option hai — sirf `lib/storage.ts` badalna hoga, baaki app waisi hi rahegi.
 
-### Neon (PostgreSQL Database) — Text Data
+### Supabase (PostgreSQL Database) — Text Data
 | Cheez | Free Limit |
 |-------|-----------|
 | Storage | **0.5 GB** free (sirf text — yeh bohat zyada rows ke liye kaafi hai) |
@@ -209,7 +208,7 @@ Saara storage ka kaam ek hi file `lib/storage.ts` se hota hai — agar future me
 
 **Iska matlab:** Hum database mein sirf text rakhte hain (PDF nahi), isliye 0.5 GB mein **laakhon rows** aa sakti hain — 360 clients aur unke documents ke records ke liye yeh barson kaafi hai.
 
-> **Note:** Free Postgres tiers inactivity ke baad "pause" ho jaate hain. Live client demo ke liye behtar hai ek aisa plan istemaal karein jo hamesha jaaga rahe (Neon par yeh aam tor par theek rehta hai), ya chhota paid plan le lein.
+> **Note:** Free Postgres tiers inactivity ke baad "pause" ho jaate hain. Live client demo se pehle project khol kar confirm kar lein woh active hai, ya chhota paid plan le lein.
 
 ### Vercel (App Hosting)
 | Cheez | Free (Hobby) Limit |
@@ -226,8 +225,8 @@ Saara storage ka kaam ek hi file `lib/storage.ts` se hota hai — agar future me
 ### Khulasa — Free Mein Kya Possible Hai
 | Service | Free Limit | Aap Ke Liye Kaafi? |
 |---------|-----------|---------------------|
-| R2 (files) | 10 GB + unlimited free downloads | ✅ Lambe arse tak |
-| Neon (database) | 0.5 GB text | ✅ Barson tak |
+| Cloudinary (files) | Card ke bina free credits | ✅ Shuruaat ke liye, volume badhne par upgrade ka option |
+| Supabase (database) | 0.5 GB text | ✅ Barson tak |
 | Vercel (app) | 100 GB bandwidth | ✅ (commercial ke liye Pro behtar) |
 | Hostinger (domain) | ~$10–15/saal | Domain ki ek choti annual cost |
 
