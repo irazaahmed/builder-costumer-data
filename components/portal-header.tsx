@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, LogOut } from "lucide-react";
@@ -32,7 +32,20 @@ export function PortalHeader({
   badge?: string;
 }) {
   const [open, setOpen] = useState(false);
+  // Mirrors the `md` breakpoint (768px) in JS. `md:hidden` doesn't reliably
+  // compile in this project's Turbopack dev build (md:flex/md:block do), so
+  // the mobile-only hamburger's visibility is driven here instead of relying
+  // on that specific Tailwind utility.
+  const [isDesktop, setIsDesktop] = useState(false);
   const pathname = usePathname();
+
+  useEffect(() => {
+    const mql = window.matchMedia("(min-width: 768px)");
+    const update = () => setIsDesktop(mql.matches);
+    update();
+    mql.addEventListener("change", update);
+    return () => mql.removeEventListener("change", update);
+  }, []);
 
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
@@ -41,19 +54,19 @@ export function PortalHeader({
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur-md supports-[backdrop-filter]:bg-background/70">
       {/* gold hairline */}
       <div className="h-0.5 w-full bg-gold-gradient" />
-      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 py-2.5 sm:px-6">
-        <div className="flex min-w-0 items-center justify-self-start">
-          <Link href={homeHref} className="flex items-center gap-2">
+      <div className="relative flex items-center justify-between gap-3 px-4 py-2.5 sm:px-6">
+        <div className="flex min-w-0 shrink items-center">
+          <Link href={homeHref} className="flex min-w-0 items-center gap-2">
             <BrandLogo size={32} />
             {badge && (
-              <span className="hidden rounded-full bg-gold/15 px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wider text-gold sm:inline">
+              <span className="hidden shrink-0 rounded-full bg-gold/15 px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wider text-gold sm:inline">
                 {badge}
               </span>
             )}
           </Link>
         </div>
 
-        <nav className="hidden items-center justify-center gap-1 md:flex">
+        <nav className="hidden items-center gap-1 md:absolute md:left-1/2 md:flex md:-translate-x-1/2">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -70,7 +83,7 @@ export function PortalHeader({
           ))}
         </nav>
 
-        <div className="flex items-center gap-1.5 justify-self-end">
+        <div className="flex shrink-0 items-center gap-1.5">
           <ThemeToggle />
           <form action={logoutAction} className="hidden md:block">
             <Button type="submit" variant="outline" size="sm">
@@ -78,44 +91,45 @@ export function PortalHeader({
               Log out
             </Button>
           </form>
-          <DropdownMenu open={open} onOpenChange={setOpen}>
-            <DropdownMenuTrigger
-              render={
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="md:hidden"
-                  aria-label="Open navigation menu"
-                />
-              }
-            >
-              <Menu />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="md:hidden">
-              {navLinks.map((link) => (
-                <DropdownMenuItem
-                  key={link.href}
-                  render={<Link href={link.href} />}
-                  className={cn(isActive(link.href) && "text-primary")}
-                >
-                  {link.label}
-                </DropdownMenuItem>
-              ))}
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
+          <div style={{ display: isDesktop ? "none" : "block" }}>
+            <DropdownMenu open={open} onOpenChange={setOpen}>
+              <DropdownMenuTrigger
                 render={
-                  <button
-                    type="button"
-                    onClick={() => logoutAction()}
-                    className="w-full"
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Open navigation menu"
                   />
                 }
               >
-                <LogOut />
-                Log out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                <Menu />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {navLinks.map((link) => (
+                  <DropdownMenuItem
+                    key={link.href}
+                    render={<Link href={link.href} />}
+                    className={cn(isActive(link.href) && "text-primary")}
+                  >
+                    {link.label}
+                  </DropdownMenuItem>
+                ))}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  render={
+                    <button
+                      type="button"
+                      onClick={() => logoutAction()}
+                      className="w-full"
+                    />
+                  }
+                >
+                  <LogOut />
+                  Log out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </div>
     </header>
