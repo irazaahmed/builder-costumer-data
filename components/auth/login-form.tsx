@@ -5,6 +5,7 @@ import Link from "next/link";
 import { loginAction, type AuthActionState } from "@/lib/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import {
   Card,
@@ -36,10 +37,9 @@ export function LoginForm() {
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="password">Password</Label>
-            <Input
+            <PasswordInput
               id="password"
               name="password"
-              type="password"
               required
               autoComplete="current-password"
             />

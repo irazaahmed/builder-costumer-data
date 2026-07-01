@@ -4,6 +4,7 @@ import { useActionState, useState } from "react";
 import { createClientAction, type ClientActionState } from "@/lib/actions/clients";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import {
   Dialog,
@@ -136,10 +137,9 @@ function CreateClientForm({
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="password">Password</Label>
-              <Input
+              <PasswordInput
                 id="password"
                 name="password"
-                type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 minLength={8}
