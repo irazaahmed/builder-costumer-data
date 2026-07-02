@@ -243,22 +243,21 @@ const getDownloadUrlSchema = z.object({
 const DOCUMENT_NOT_FOUND_ERROR = "Document not found.";
 
 /**
- * Client-only. Returns a short-lived presigned GET URL for a single document
- * the session's own client owns. Ownership is decided exclusively by
- * comparing the document's clientId against session.user.clientId (set at
- * login from the linked Client row) — never against documentId or any other
- * caller-supplied value.
+ * Client or admin. A CLIENT may only fetch a URL for a document their own
+ * client owns — ownership is decided exclusively by comparing the
+ * document's clientId against session.user.clientId (set at login from the
+ * linked Client row), never against documentId or any other caller-supplied
+ * value. An ADMIN has no ownership restriction (full access, per CLAUDE.md).
  */
 export async function getDownloadUrlAction(
   documentId: string,
   mode: "view" | "download"
 ): Promise<DocumentActionState & { url?: string }> {
   const session = await auth();
-  if (
-    !session?.user ||
-    session.user.role !== "CLIENT" ||
-    session.user.status !== "ACTIVE"
-  ) {
+  const isAdmin = session?.user?.role === "ADMIN";
+  const isActiveClient =
+    session?.user?.role === "CLIENT" && session.user.status === "ACTIVE";
+  if (!session?.user || (!isAdmin && !isActiveClient)) {
     return { error: "Not authorized." };
   }
 
@@ -272,7 +271,7 @@ export async function getDownloadUrlAction(
       where: { id: parsed.data.documentId },
     });
 
-    if (!document || document.clientId !== session.user.clientId) {
+    if (!document || (!isAdmin && document.clientId !== session.user.clientId)) {
       return { error: DOCUMENT_NOT_FOUND_ERROR };
     }
 

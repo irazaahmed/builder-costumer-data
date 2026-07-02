@@ -20,6 +20,7 @@ import {
 import { EditClientForm } from "@/components/admin/edit-client-form";
 import { UploadDocumentForm } from "@/components/admin/upload-document-form";
 import { DeleteDocumentButton } from "@/components/admin/delete-document-button";
+import { DocumentActions } from "@/components/client/document-actions";
 import { CategoryBadge } from "@/components/category-badge";
 
 export default async function ClientProfilePage({
@@ -109,7 +110,10 @@ export default async function ClientProfilePage({
                         </TableCell>
                         <TableCell>{formatFileSize(doc.fileSize)}</TableCell>
                         <TableCell>
-                          <DeleteDocumentButton documentId={doc.id} />
+                          <div className="flex items-center gap-2">
+                            <DocumentActions documentId={doc.id} />
+                            <DeleteDocumentButton documentId={doc.id} />
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}

@@ -153,3 +153,14 @@ export function buildDocumentKey(
   const safeFileName = fileName.replace(/[^a-zA-Z0-9.\-_]/g, "_");
   return `clients/${clientId}/${category}/${timestamp}-${safeFileName}`;
 }
+
+/**
+ * Builds the Cloudinary public_id for a broadcast notification's optional
+ * attachment. Not scoped to any client — a notification is visible to every
+ * active client, unlike a Document.
+ */
+export function buildNotificationKey(fileName: string) {
+  const timestamp = Date.now();
+  const safeFileName = fileName.replace(/[^a-zA-Z0-9.\-_]/g, "_");
+  return `notifications/${timestamp}-${safeFileName}`;
+}

@@ -86,3 +86,15 @@ enum DocumentCategory {
   CNIC
   OTHER
 }
+
+model Notification {
+  id         String   @id @default(cuid())
+  title      String
+  message    String?
+  fileKey    String?
+  fileName   String?
+  fileSize   Int?
+  mimeType   String?
+  createdBy  String // admin user id who created it
+  createdAt  DateTime @default(now())
+}
