@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/card";
 import { PageHeader } from "@/components/page-header";
 import { NotificationActions } from "@/components/client/notification-actions";
+import { MarkSeen } from "@/components/client/mark-seen";
+import { markNotificationsSeenAction } from "@/lib/actions/notifications";
 
 export default async function ClientNotificationsPage() {
   const session = await auth();
@@ -30,6 +32,7 @@ export default async function ClientNotificationsPage() {
 
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 p-6">
+      <MarkSeen action={markNotificationsSeenAction} />
       <PageHeader
         icon={Bell}
         title="Notifications"

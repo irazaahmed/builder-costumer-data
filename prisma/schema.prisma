@@ -13,13 +13,13 @@ datasource db {
 }
 
 model User {
-  id        String     @id @default(cuid())
-  name      String
-  email     String     @unique
-  password  String
-  phone     String?
-  role      Role       @default(CLIENT)
-  status    UserStatus @default(PENDING)
+  id       String     @id @default(cuid())
+  name     String
+  email    String     @unique
+  password String
+  phone    String?
+  role     Role       @default(CLIENT)
+  status   UserStatus @default(PENDING)
 
   // claim fields submitted at signup, used by admin to verify
   claimedCnic       String?
@@ -41,20 +41,25 @@ enum UserStatus {
 }
 
 model Client {
-  id             String     @id @default(cuid())
-  user           User       @relation(fields: [userId], references: [id])
-  userId         String     @unique
+  id             String    @id @default(cuid())
+  user           User      @relation(fields: [userId], references: [id])
+  userId         String    @unique
   fullName       String
   fatherName     String?
   cnic           String?
   phone          String?
   address        String?
   membershipDate DateTime?
-  plot           Plot       @relation(fields: [plotId], references: [id])
-  plotId         String     @unique
-  documents      Document[]
-  linkedBy       String // admin user id who performed the link action
-  createdAt      DateTime   @default(now())
+
+  // last time the client opened these tabs; null = never opened (drives unread dot indicator)
+  notificationsSeenAt DateTime?
+  documentsSeenAt     DateTime?
+
+  plot      Plot       @relation(fields: [plotId], references: [id])
+  plotId    String     @unique
+  documents Document[]
+  linkedBy  String // admin user id who performed the link action
+  createdAt DateTime   @default(now())
 }
 
 model Plot {
@@ -88,13 +93,13 @@ enum DocumentCategory {
 }
 
 model Notification {
-  id         String   @id @default(cuid())
-  title      String
-  message    String?
-  fileKey    String?
-  fileName   String?
-  fileSize   Int?
-  mimeType   String?
-  createdBy  String // admin user id who created it
-  createdAt  DateTime @default(now())
+  id        String   @id @default(cuid())
+  title     String
+  message   String?
+  fileKey   String?
+  fileName  String?
+  fileSize  Int?
+  mimeType  String?
+  createdBy String // admin user id who created it
+  createdAt DateTime @default(now())
 }

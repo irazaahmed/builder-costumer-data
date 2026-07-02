@@ -20,6 +20,9 @@ import {
 interface NavLink {
   href: string;
   label: string;
+  // Shows a small "new" dot next to this link — e.g. an unopened
+  // notification or document — until the linked page is actually visited.
+  showDot?: boolean;
 }
 
 export function PortalHeader({
@@ -50,6 +53,9 @@ export function PortalHeader({
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
 
+  const showDot = (link: NavLink) => Boolean(link.showDot) && !isActive(link.href);
+  const hasAnyDot = navLinks.some(showDot);
+
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur-md supports-[backdrop-filter]:bg-background/70">
       {/* gold hairline */}
@@ -72,13 +78,19 @@ export function PortalHeader({
               key={link.href}
               href={link.href}
               className={cn(
-                "rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
+                "relative rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
                 isActive(link.href)
                   ? "bg-primary/10 text-primary"
                   : "text-muted-foreground hover:bg-muted hover:text-foreground"
               )}
             >
               {link.label}
+              {showDot(link) && (
+                <span
+                  aria-label="New"
+                  className="absolute right-0.5 top-0.5 size-1.5 rounded-full bg-gold"
+                />
+              )}
             </Link>
           ))}
         </nav>
@@ -99,19 +111,35 @@ export function PortalHeader({
                     variant="ghost"
                     size="icon"
                     aria-label="Open navigation menu"
+                    className="relative"
                   />
                 }
               >
                 <Menu />
+                {hasAnyDot && (
+                  <span
+                    aria-label="New"
+                    className="absolute right-1 top-1 size-2 rounded-full bg-gold"
+                  />
+                )}
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 {navLinks.map((link) => (
                   <DropdownMenuItem
                     key={link.href}
                     render={<Link href={link.href} />}
-                    className={cn(isActive(link.href) && "text-primary")}
+                    className={cn(
+                      "flex items-center justify-between gap-2",
+                      isActive(link.href) && "text-primary"
+                    )}
                   >
                     {link.label}
+                    {showDot(link) && (
+                      <span
+                        aria-label="New"
+                        className="size-1.5 rounded-full bg-gold"
+                      />
+                    )}
                   </DropdownMenuItem>
                 ))}
                 <DropdownMenuSeparator />

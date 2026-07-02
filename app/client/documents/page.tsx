@@ -23,6 +23,8 @@ import { FileText } from "lucide-react";
 import { DocumentActions } from "@/components/client/document-actions";
 import { CategoryBadge } from "@/components/category-badge";
 import { PageHeader } from "@/components/page-header";
+import { MarkSeen } from "@/components/client/mark-seen";
+import { markDocumentsSeenAction } from "@/lib/actions/documents";
 
 const CATEGORIES = [
   { value: "LEGAL", label: "Legal" },
@@ -68,6 +70,7 @@ export default async function ClientDocumentsPage({
 
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 p-6">
+      <MarkSeen action={markDocumentsSeenAction} />
       <PageHeader
         icon={FileText}
         title="Your Documents"

@@ -287,3 +287,27 @@ export async function getDownloadUrlAction(
     return { error: "Failed to generate download link. Please try again." };
   }
 }
+
+/**
+ * Client-only. Stamps the session's own client with "documents seen now,"
+ * powering the unread dot on the Documents nav link. Scoped by
+ * session.user.clientId only, never by an id the caller could supply.
+ */
+export async function markDocumentsSeenAction(): Promise<DocumentActionState> {
+  const session = await auth();
+  if (
+    !session?.user ||
+    session.user.role !== "CLIENT" ||
+    session.user.status !== "ACTIVE" ||
+    !session.user.clientId
+  ) {
+    return { error: "Not authorized." };
+  }
+
+  await prisma.client.update({
+    where: { id: session.user.clientId },
+    data: { documentsSeenAt: new Date() },
+  });
+
+  return { success: true };
+}
