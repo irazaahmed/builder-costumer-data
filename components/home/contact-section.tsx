@@ -1,8 +1,9 @@
 "use client";
 
 import { motion } from "motion/react";
-import { Mail, Phone } from "lucide-react";
-import { branding } from "@/lib/branding";
+import { Mail } from "lucide-react";
+import { branding, whatsappHref } from "@/lib/branding";
+import { WhatsappIcon } from "@/components/icons/whatsapp-icon";
 
 export default function ContactSection() {
   return (
@@ -36,15 +37,17 @@ export default function ContactSection() {
             </span>
           </a>
           <a
-            href={`tel:${branding.contact.phone}`}
+            href={whatsappHref}
+            target="_blank"
+            rel="noopener noreferrer"
             className="group flex items-center gap-3 rounded-xl border bg-card p-4 text-left ring-1 ring-foreground/10 transition-all hover:-translate-y-0.5 hover:ring-gold/40"
           >
             <span className="flex size-11 items-center justify-center rounded-xl bg-gold/15 text-gold">
-              <Phone className="size-5" />
+              <WhatsappIcon className="size-5" />
             </span>
             <span className="flex flex-col">
-              <span className="text-xs text-muted-foreground">Phone</span>
-              <span className="text-sm font-medium">{branding.contact.phone}</span>
+              <span className="text-xs text-muted-foreground">WhatsApp</span>
+              <span className="text-sm font-medium">{branding.contact.whatsapp}</span>
             </span>
           </a>
         </div>

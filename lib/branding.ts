@@ -10,8 +10,8 @@ export const branding = {
   tagline: "Your plot documents, secured in one place.",
   logoPath: "/logo.svg",
   contact: {
-    email: "info@lodhibrothers.com",
-    phone: "+92 300 0000000",
+    email: "lodhibiradricooperativehousing@gmail.com",
+    whatsapp: "+92 345 6010622",
     address: "Surjani Sector 12, Karachi, Pakistan",
   },
   colors: {
@@ -37,6 +37,10 @@ export const branding = {
     },
   },
 } as const;
+
+// Direct click-to-chat link derived from the WhatsApp number above — wa.me
+// needs the number as digits only (no "+", spaces, or dashes).
+export const whatsappHref = `https://wa.me/${branding.contact.whatsapp.replace(/\D/g, "")}`;
 
 // Maps each DocumentCategory to a palette color. Centralized here so the
 // same category always reads as the same color everywhere it appears

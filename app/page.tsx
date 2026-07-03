@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { MotionConfig } from "motion/react";
-import { Mail, Phone, MapPin } from "lucide-react";
-import { branding } from "@/lib/branding";
+import { Mail, MapPin } from "lucide-react";
+import { branding, whatsappHref } from "@/lib/branding";
 import { buttonVariants } from "@/components/ui/button";
 import { BrandLogo } from "@/components/brand-logo";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { WhatsappIcon } from "@/components/icons/whatsapp-icon";
 import NavLink from "@/components/home/nav-link";
 import HeroSection from "@/components/home/hero-section";
 import AboutSection from "@/components/home/about-section";
@@ -122,11 +123,13 @@ export default function Home() {
               {branding.contact.email}
             </a>
             <a
-              href={`tel:${branding.contact.phone}`}
+              href={whatsappHref}
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex items-center gap-2 text-sm text-primary-foreground/70 transition-colors hover:text-primary-foreground"
             >
-              <Phone className="size-4 shrink-0 text-gold-light" />
-              {branding.contact.phone}
+              <WhatsappIcon className="size-4 shrink-0 text-gold-light" />
+              {branding.contact.whatsapp}
             </a>
             <span className="flex items-center gap-2 text-sm text-primary-foreground/70">
               <MapPin className="size-4 shrink-0 text-gold-light" />
