@@ -69,7 +69,7 @@ export default function GalleryClient({
         value={activeSlug}
         onValueChange={(value) => setActiveSlug(value as string)}
       >
-        <TabsList className="h-auto flex-wrap justify-start gap-1.5 bg-transparent p-0">
+        <TabsList className="h-auto flex-wrap justify-start gap-1.5 bg-transparent p-0 group-data-horizontal/tabs:h-auto">
           {categories.map((category) => (
             <TabsTrigger
               key={category.slug}
