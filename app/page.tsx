@@ -10,17 +10,24 @@ import NavLink from "@/components/home/nav-link";
 import HeroSection from "@/components/home/hero-section";
 import AboutSection from "@/components/home/about-section";
 import FeaturesSection from "@/components/home/features-section";
+import GallerySection from "@/components/home/gallery-section";
+import LegalDocumentsSection from "@/components/home/legal-documents-section";
 import LocationSection from "@/components/home/location-section";
 import ContactSection from "@/components/home/contact-section";
+import { getGalleryCategories, getLegalDocuments } from "@/lib/gallery";
 
 const SECTION_LINKS = [
   { href: "#about", label: "About" },
   { href: "#features", label: "Why Choose Us" },
+  { href: "#gallery", label: "Gallery" },
   { href: "#location", label: "Location" },
   { href: "#contact", label: "Contact" },
 ];
 
 export default function Home() {
+  const galleryCategories = getGalleryCategories();
+  const legalDocuments = getLegalDocuments();
+
   return (
     <MotionConfig reducedMotion="user">
       <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur-md supports-[backdrop-filter]:bg-background/70">
@@ -66,6 +73,10 @@ export default function Home() {
         <section id="features">
           <FeaturesSection />
         </section>
+        <section id="gallery">
+          <GallerySection categories={galleryCategories} />
+        </section>
+        <LegalDocumentsSection documents={legalDocuments} />
         <section id="location">
           <LocationSection />
         </section>
