@@ -1,11 +1,11 @@
-# Lodhi Brothers Housing Society — Client Document Portal
+# Lodhi Biradari Cooperative Housing Society — Client Document Portal
 ### Project Delivery Summary
 
 ---
 
 ## 1. Yeh System Kya Hai? (Overview)
 
-Yeh ek **secure online Document Portal** hai jo khaas Lodhi Brothers Housing Society ke liye banaya gaya hai.
+Yeh ek **secure online Document Portal** hai jo khaas Lodhi Biradari Cooperative Housing Society ke liye banaya gaya hai.
 
 Aap ka project: **Surjani Sector 12, Karachi** — 17 acre, **360 plots (sab SOLD)**, 360 clients.
 
@@ -92,7 +92,7 @@ Documents 5 categories mein munazzam (organized) hain taake dhoondhna aasaan ho:
 
 ## 7. Design Aur Branding (Look & Feel)
 
-- **Naam aur Brand:** Lodhi Brothers Housing Society — apna logo (rooftop house badge) ke saath.
+- **Naam aur Brand:** Lodhi Biradari Cooperative Housing Society — apna logo (rooftop house badge) ke saath.
 - **Colors:** Premium real-estate look — **Emerald Green (deep) + Gold accent**, jo trust aur luxury dono dikhaata hai.
 - **Light + Dark dono themes:** User apni marzi se switch kar sakta hai; choice yaad rehti hai. By default site **dark mode** mein khulti hai.
 - **Mobile + Desktop dono par** poori tarah responsive — phone, tablet, computer har jagah saaf nazar aata hai.
@@ -247,5 +247,5 @@ Saara storage ka kaam ek hi file `lib/storage.ts` se hota hai — agar future me
 
 ---
 
-*Prepared for: Lodhi Brothers Housing Society*
+*Prepared for: Lodhi Biradari Cooperative Housing Society*
 *System: Secure Client Document Vault & Portal*

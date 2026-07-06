@@ -1,4 +1,4 @@
-# Lodhi Brothers Housing Society — Client Document Vault and Portal
+# Lodhi Biradari Cooperative Housing Society — Client Document Vault and Portal
 
 A secure document management portal for a real estate builder (17-acre project, Surjani Sector 12, Karachi, 359 plots). Admin uploads each client's legal documents as PDFs; each client logs in and sees only their own. See `CLAUDE.md` for the full architecture, data model, and build rules.
 

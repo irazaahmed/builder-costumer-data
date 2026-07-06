@@ -4,9 +4,9 @@
 // <html> in app/layout.tsx and consumed via Tailwind theme tokens.
 
 export const branding = {
-  siteName: "Lodhi Brothers Housing Society",
+  siteName: "Lodhi Biradari Cooperative Housing Society",
   // Compact form for tight spaces (navbars, mobile, favicons).
-  shortName: "Lodhi Brothers",
+  shortName: "Lodhi Biradari",
   tagline: "Your plot documents, secured in one place.",
   logoPath: "/logo.svg",
   contact: {

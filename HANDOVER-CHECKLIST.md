@@ -1,4 +1,4 @@
-# Handover Checklist — Lodhi Brothers Housing Society Portal
+# Handover Checklist — Lodhi Biradari Cooperative Housing Society Portal
 
 > Maqsad: poora project (app, database, file storage, domain) **client ki apni IDs** par shift karna — saaf, mahfooz, aur sahi tarteeb mein.
 > **Sab se aham:** yeh handover **asal data daalne se PEHLE** karna behtar hai. Abhi sab dummy hai — to client ka setup pehle banao, phir asal clients/documents seedha client ke system mein daalo. Isse koi data migration karni hi nahi paregi.
@@ -140,4 +140,4 @@ Ek file/sheet mein client ko yeh sab do:
 
 ---
 
-*Prepared for: Lodhi Brothers Housing Society — Project Handover*
+*Prepared for: Lodhi Biradari Cooperative Housing Society — Project Handover*

@@ -39,8 +39,8 @@ export default function AboutSection() {
         </div>
         <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl shadow-lg ring-1 ring-foreground/10">
           <Image
-            src="https://images.unsplash.com/photo-1524813686514-a57563d77965?auto=format&fit=crop&w=1200&q=80"
-            alt="Aerial view of a residential plot development with organized streets and lots"
+            src="/gallery/About.jpeg"
+            alt="View of the Lodhi Biradari Cooperative Housing Society project"
             fill
             className="object-cover"
             sizes="(min-width: 768px) 50vw, 100vw"

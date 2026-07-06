@@ -14,7 +14,7 @@ Build with **dummy data first** (dummy clients, dummy plots, sample PDFs), struc
 
 The brand identity is now decided:
 
-- **Name:** "Lodhi Brothers Housing Society" (short form "Lodhi Brothers" for tight spaces).
+- **Name:** "Lodhi Biradari Cooperative Housing Society" (short form "Lodhi Biradari" for tight spaces).
 - **Color theme:** deep **emerald green** (`#0F5132` / strong `#157347`) as the primary, with **gold** (`#C8A04D`, light `#E3C77B`) as the accent — the premium real-estate convention (rich primary + gold).
 - **Logo:** a theme-adaptive rooftop-house badge + wordmark (`components/brand-logo.tsx`, drawn with CSS theme vars so it adapts to light/dark) plus a matching standalone `public/logo.svg` for the favicon/OG.
 - **Themes:** full **light + dark** support via `next-themes` (`components/theme-provider.tsx`), toggled from every navbar (`components/theme-toggle.tsx`). Light is the default.
