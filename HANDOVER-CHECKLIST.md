@@ -72,6 +72,7 @@ Aage ka tareeqa is par thoda badalta hai:
 | `CLOUDINARY_API_KEY` | Cloudinary dashboard |
 | `CLOUDINARY_API_SECRET` | Cloudinary dashboard |
 | `AUTH_SECRET` | **Naya** generate karo → `npx auth secret` (ya `openssl rand -base64 32`) |
+| `AUTH_URL` | Live domain: `https://lodhisociety.com` (domain add karne ke baad) |
 
 - [ ] Sab variables **Production** (aur chahein to Preview) environment ke liye add kiye.
 - [ ] `AUTH_SECRET` **naya** banaya (purana dev wala dobara use na karo).
@@ -99,12 +100,13 @@ Aage ka tareeqa is par thoda badalta hai:
 
 ---
 
-## 6. Domain Live Karo
+## 6. Domain Live Karo (lodhisociety.com)
 
-- [ ] Vercel project mein **custom domain** add karo (Hostinger wala).
-- [ ] Hostinger DNS mein Vercel ke records daalo.
+- [ ] Vercel → Project → Settings → Domains mein **`lodhisociety.com`** aur **`www.lodhisociety.com`** add karo.
+- [ ] Hostinger DNS mein Vercel ke diye records daalo (apex `@` ke liye `A` record → Vercel IP, `www` ke liye `CNAME` → `cname.vercel-dns.com`). Purane conflicting records hata do.
+- [ ] Vercel env mein **`AUTH_URL=https://lodhisociety.com`** set karo, phir redeploy (login callbacks/redirects domain par sahi chalein).
 - [ ] DNS propagate hone ka intezar (kuch minute–ghante).
-- [ ] Confirm: domain par site khulti hai, **HTTPS** (taala) chal raha hai.
+- [ ] Confirm: `https://lodhisociety.com` par site khulti hai, **HTTPS** (taala) chal raha hai.
 
 ---
 

@@ -17,12 +17,20 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(branding.url),
   title: {
     default: branding.siteName,
     template: `%s · ${branding.shortName}`,
   },
   description: branding.tagline,
   icons: { icon: branding.logoPath },
+  openGraph: {
+    type: "website",
+    url: branding.url,
+    siteName: branding.siteName,
+    title: branding.siteName,
+    description: branding.tagline,
+  },
 };
 
 // Brand source colors are defined once in lib/branding.ts and injected here as

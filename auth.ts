@@ -4,6 +4,10 @@ import { prisma } from "@/lib/prisma";
 import { verifyPassword } from "@/lib/password";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  // Trust the deployment host so login callbacks/redirects work on the custom
+  // domain (lodhisociety.com) as well as the *.vercel.app URL. Set AUTH_URL in
+  // the Vercel env to the canonical domain to pin absolute callback URLs.
+  trustHost: true,
   session: { strategy: "jwt" },
   pages: { signIn: "/login" },
   providers: [

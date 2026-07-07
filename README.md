@@ -2,6 +2,8 @@
 
 A secure document management portal for a real estate builder (17-acre project, Surjani Sector 12, Karachi, 359 plots). Admin uploads each client's legal documents as PDFs; each client logs in and sees only their own. See `CLAUDE.md` for the full architecture, data model, and build rules.
 
+**Live site:** [lodhisociety.com](https://lodhisociety.com)
+
 ## Stack
 
 - Next.js 15/16 (App Router, Server Actions) + TypeScript

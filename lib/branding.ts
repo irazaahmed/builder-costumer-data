@@ -8,6 +8,10 @@ export const branding = {
   // Compact form for tight spaces (navbars, mobile, favicons).
   shortName: "Lodhi Biradari",
   tagline: "Your plot documents, secured in one place.",
+  // Canonical public URL of the live site (custom domain on Vercel). Used as
+  // the metadataBase for absolute Open Graph / canonical URLs. The app still
+  // runs on Vercel; this is only the domain pointed at it via DNS.
+  url: "https://lodhisociety.com",
   logoPath: "/logo.svg",
   contact: {
     email: "lodhibiradricooperativehousing@gmail.com",
