@@ -20,6 +20,7 @@ import {
 import { EditClientForm } from "@/components/admin/edit-client-form";
 import { UploadDocumentForm } from "@/components/admin/upload-document-form";
 import { DeleteDocumentButton } from "@/components/admin/delete-document-button";
+import { DeleteClientDialog } from "@/components/admin/delete-client-dialog";
 import { DocumentActions } from "@/components/client/document-actions";
 import { CategoryBadge } from "@/components/category-badge";
 
@@ -124,6 +125,27 @@ export default async function ClientProfilePage({
           </CardContent>
         </Card>
       </div>
+
+      <Card className="border-destructive/40">
+        <CardHeader>
+          <CardTitle className="text-destructive">Danger zone</CardTitle>
+          <CardDescription>
+            Permanently delete this client, their login, and all{" "}
+            {client.documents.length}{" "}
+            {client.documents.length === 1 ? "document" : "documents"} (files
+            included). Plot {client.plot.plotNumber} will be freed. This cannot
+            be undone.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <DeleteClientDialog
+            clientId={client.id}
+            clientName={client.fullName}
+            plotNumber={client.plot.plotNumber}
+            documentCount={client.documents.length}
+          />
+        </CardContent>
+      </Card>
     </main>
   );
 }

@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/password";
+import { deleteFile } from "@/lib/storage";
 import { Prisma } from "@/lib/generated/prisma/client";
 
 export interface ClientActionState {
@@ -233,6 +234,84 @@ export async function createClientAction(
   revalidatePath("/admin/clients");
   revalidatePath("/admin/plots");
   revalidatePath("/admin/dashboard");
+
+  return { success: true };
+}
+
+const deleteClientSchema = z.object({
+  clientId: z.string().min(1),
+  // The admin must retype the exact plot number — enforced again here on the
+  // server, not just in the dialog UI, so a client can never be deleted by an
+  // accidental or forged call that skips the typed confirmation.
+  confirmation: z.string().min(1),
+});
+
+/**
+ * Admin-only, deliberately strict. Permanently deletes a client: their
+ * uploaded documents (rows AND the underlying Cloudinary files), their
+ * Client record, and their User login. The linked Plot is left intact and
+ * simply freed (plotId is unique on Client), so it can be re-assigned later.
+ * Requires the admin to retype the client's plot number as confirmation.
+ */
+export async function deleteClientAction(
+  _prevState: ClientActionState | undefined,
+  formData: FormData
+): Promise<ClientActionState> {
+  const session = await auth();
+  if (!session?.user || session.user.role !== "ADMIN") {
+    return { error: "Not authorized." };
+  }
+
+  const parsed = deleteClientSchema.safeParse({
+    clientId: formData.get("clientId"),
+    confirmation: formData.get("confirmation"),
+  });
+  if (!parsed.success) {
+    return { error: "Invalid input." };
+  }
+
+  const { clientId, confirmation } = parsed.data;
+
+  const client = await prisma.client.findUnique({
+    where: { id: clientId },
+    include: { plot: true, documents: true },
+  });
+  if (!client) {
+    return { error: "Client not found." };
+  }
+
+  if (
+    confirmation.trim().toUpperCase() !== client.plot.plotNumber.toUpperCase()
+  ) {
+    return {
+      error: `Confirmation does not match. Type the plot number (${client.plot.plotNumber}) exactly to delete.`,
+    };
+  }
+
+  // Delete the DB rows first, in one transaction, so the client is never left
+  // half-deleted (documents → client → the user login). The Plot row is left
+  // untouched and simply unlinked.
+  try {
+    await prisma.$transaction([
+      prisma.document.deleteMany({ where: { clientId: client.id } }),
+      prisma.client.delete({ where: { id: client.id } }),
+      prisma.user.delete({ where: { id: client.userId } }),
+    ]);
+  } catch {
+    return { error: "Failed to delete client. Please try again." };
+  }
+
+  // Rows are gone; now remove the underlying Cloudinary objects. A failure
+  // here only leaves a harmless orphaned file, never a dangling DB reference —
+  // same tradeoff as deleteDocumentAction.
+  await Promise.all(
+    client.documents.map((doc) => deleteFile(doc.fileKey).catch(() => {}))
+  );
+
+  revalidatePath("/admin/clients");
+  revalidatePath("/admin/plots");
+  revalidatePath("/admin/dashboard");
+  revalidatePath("/admin/pending");
 
   return { success: true };
 }
