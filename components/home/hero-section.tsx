@@ -27,11 +27,14 @@ export default function HeroSection() {
         className="absolute -top-40 left-1/2 -z-20 size-[640px] -translate-x-1/2 rounded-full bg-gold/10 blur-3xl"
       />
 
+      {/* 3D plot-grid backdrop — shown on every screen size (it used to be
+          md-and-up only, so mobile got a blank hero). Size scales down on
+          small screens so it stays a subtle backdrop, not an overflow. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 mx-auto hidden max-w-5xl items-center justify-center opacity-30 md:flex"
+        className="pointer-events-none absolute inset-0 -z-10 mx-auto flex max-w-5xl items-center justify-center opacity-30"
       >
-        <div className="size-[560px]">
+        <div className="size-[300px] sm:size-[440px] md:size-[560px]">
           <HeroSceneLoader />
         </div>
       </div>

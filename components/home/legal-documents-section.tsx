@@ -1,29 +1,26 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "motion/react";
-import { FileText, Download } from "lucide-react";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+import { ArrowRight } from "lucide-react";
+import { buttonVariants } from "@/components/ui/button";
 import { branding } from "@/lib/branding";
 import type { LegalDocument } from "@/lib/gallery";
-
-const BADGE_CLASSES = [
-  "bg-palette-blue/10 text-palette-blue",
-  "bg-palette-emerald/10 text-palette-emerald",
-  "bg-palette-violet/10 text-palette-violet",
-  "bg-palette-amber/10 text-palette-amber",
-];
+import LegalDocumentsGrid from "./legal-documents-grid";
 
 export default function LegalDocumentsSection({
   documents,
+  limit,
 }: {
   documents: LegalDocument[];
+  // When set, only the first `limit` documents show here and a "View all"
+  // button links to the full /legal-documents page (homepage teaser use).
+  limit?: number;
 }) {
+  const shown = limit != null ? documents.slice(0, limit) : documents;
+  const hasMore = limit != null && documents.length > limit;
+
   return (
     <motion.section
       initial={{ opacity: 0, y: 24 }}
@@ -66,36 +63,19 @@ export default function LegalDocumentsSection({
           </span>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {documents.map((doc, i) => (
-            <motion.a
-              key={doc.fileName}
-              href={doc.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.4, delay: i * 0.1 }}
-              whileHover={{ y: -4 }}
+        <LegalDocumentsGrid documents={shown} />
+
+        {hasMore && (
+          <div className="flex justify-center">
+            <Link
+              href="/legal-documents"
+              className={buttonVariants({ variant: "outline", size: "lg" })}
             >
-              <Card className="h-full transition-all hover:-translate-y-1 hover:shadow-lg hover:ring-gold/30">
-                <CardHeader>
-                  <div
-                    className={`mb-2 flex size-11 items-center justify-center rounded-xl ${BADGE_CLASSES[i % BADGE_CLASSES.length]}`}
-                  >
-                    <FileText className="size-5" />
-                  </div>
-                  <CardTitle className="flex items-start justify-between gap-2 text-base">
-                    {doc.title}
-                    <Download className="size-4 shrink-0 text-muted-foreground" />
-                  </CardTitle>
-                  <CardDescription>PDF &middot; {doc.sizeLabel}</CardDescription>
-                </CardHeader>
-              </Card>
-            </motion.a>
-          ))}
-        </div>
+              View all {documents.length} documents
+              <ArrowRight className="size-4" />
+            </Link>
+          </div>
+        )}
       </div>
     </motion.section>
   );

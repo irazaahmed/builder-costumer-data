@@ -8,6 +8,7 @@ import { BrandLogo } from "@/components/brand-logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { WhatsappIcon } from "@/components/icons/whatsapp-icon";
 import NavLink from "@/components/home/nav-link";
+import HomeMobileNav from "@/components/home/home-mobile-nav";
 import HeroSection from "@/components/home/hero-section";
 import AboutSection from "@/components/home/about-section";
 import FeaturesSection from "@/components/home/features-section";
@@ -50,18 +51,23 @@ export default function Home() {
           </nav>
           <div className="flex items-center gap-1.5">
             <ThemeToggle />
-            <Link
-              href="/login"
-              className={buttonVariants({ variant: "outline", size: "sm" })}
-            >
-              Login
-            </Link>
-            <Link
-              href="/signup"
-              className={buttonVariants({ variant: "gold", size: "sm" })}
-            >
-              Sign Up
-            </Link>
+            {/* Login/Sign Up as inline buttons on desktop; on mobile they move
+                into the hamburger menu below to keep the bar uncrowded. */}
+            <div className="hidden items-center gap-1.5 lg:flex">
+              <Link
+                href="/login"
+                className={buttonVariants({ variant: "outline", size: "sm" })}
+              >
+                Login
+              </Link>
+              <Link
+                href="/signup"
+                className={buttonVariants({ variant: "gold", size: "sm" })}
+              >
+                Sign Up
+              </Link>
+            </div>
+            <HomeMobileNav links={SECTION_LINKS} />
           </div>
         </div>
       </header>
@@ -77,7 +83,9 @@ export default function Home() {
         <section id="gallery">
           <GallerySection categories={galleryCategories} />
         </section>
-        <LegalDocumentsSection documents={legalDocuments} />
+        <section id="legal-documents">
+          <LegalDocumentsSection documents={legalDocuments} limit={4} />
+        </section>
         <section id="location">
           <LocationSection />
         </section>

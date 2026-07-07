@@ -113,12 +113,16 @@ export type LegalDocument = {
   sizeLabel: string;
 };
 
-const LEGAL_DOC_TITLES: Record<string, string> = {
-  "ByLaws Lodhi Brother Housing Society.pdf": "Society By-Laws",
-  "Laws.pdf": "Society Laws",
-  "Legal Document.pdf": "Legal Document",
-  "Map.pdf": "Society Map",
-};
+// Explicit display order — the first entry shows first everywhere (homepage
+// teaser and the /legal-documents page). Any PDF dropped into the folder that
+// isn't listed here still appears, appended after these and sorted by name.
+const LEGAL_DOCS: { fileName: string; title: string }[] = [
+  { fileName: "Financial-Report-2025.pdf", title: "Financial Report 2025" },
+  { fileName: "ByLaws Lodhi Brother Housing Society.pdf", title: "Society By-Laws" },
+  { fileName: "Laws.pdf", title: "Society Laws" },
+  { fileName: "Legal Document.pdf", title: "Legal Document" },
+  { fileName: "Map.pdf", title: "Society Map" },
+];
 
 export function getLegalDocuments(): LegalDocument[] {
   const dir = path.join(GALLERY_ROOT, "legal-documents");
@@ -129,12 +133,20 @@ export function getLegalDocuments(): LegalDocument[] {
     return [];
   }
 
+  const orderIndex = new Map(LEGAL_DOCS.map((doc, i) => [doc.fileName, i]));
+  const titleByFile = new Map(LEGAL_DOCS.map((doc) => [doc.fileName, doc.title]));
+  const UNLISTED = Number.MAX_SAFE_INTEGER;
+
   return files
     .filter((fileName) => fileName.toLowerCase().endsWith(".pdf"))
-    .sort()
+    .sort((a, b) => {
+      const ia = orderIndex.get(a) ?? UNLISTED;
+      const ib = orderIndex.get(b) ?? UNLISTED;
+      return ia !== ib ? ia - ib : a.localeCompare(b);
+    })
     .map((fileName) => ({
       fileName,
-      title: LEGAL_DOC_TITLES[fileName] ?? fileName.replace(/\.pdf$/i, ""),
+      title: titleByFile.get(fileName) ?? fileName.replace(/\.pdf$/i, ""),
       href: `/gallery/legal-documents/${encodeURIComponent(fileName)}`,
       sizeLabel: formatFileSize(fs.statSync(path.join(dir, fileName)).size),
     }));
