@@ -24,14 +24,14 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
           aria-hidden
           className="absolute -bottom-20 -left-10 size-72 rounded-full bg-black/20 blur-3xl"
         />
-        {/* official registration seal, large, as a subtle background watermark */}
+        {/* official registration seal — small mark in the bottom-left corner */}
         <Image
           src={branding.sealLight}
           alt=""
           aria-hidden
           width={520}
           height={520}
-          className="pointer-events-none absolute -bottom-12 -right-12 w-[24rem] max-w-none opacity-20"
+          className="pointer-events-none absolute bottom-6 left-6 w-28 max-w-none opacity-30"
         />
         <Link href="/" className="relative w-fit">
           <BrandLogo size={40} variant="onBrand" />

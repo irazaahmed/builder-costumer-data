@@ -36,36 +36,35 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* official registration seal — foreground emblem above the name.
-          Emerald in light theme, gold in dark (a fixed-colour PNG can't adapt) */}
-      <motion.div {...fadeUp(0)} className="relative z-10">
-        <Image
-          src={branding.seal}
-          alt={`Official registration seal of ${branding.siteName}`}
-          width={520}
-          height={520}
-          priority
-          className="h-28 w-auto sm:h-32 dark:hidden"
-        />
-        <Image
-          src={branding.sealLight}
-          alt={`Official registration seal of ${branding.siteName}`}
-          width={520}
-          height={520}
-          priority
-          className="hidden h-28 w-auto sm:h-32 dark:block"
-        />
-      </motion.div>
-
       <motion.span
-        {...fadeUp(0.1)}
+        {...fadeUp(0)}
         className="z-10 inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-xs font-semibold tracking-wide text-gold"
       >
         <MapPin className="size-3.5" />
         Surjani Sector 12, Karachi · 17 Acres
       </motion.span>
 
-      <div className="relative z-10 flex max-w-3xl flex-col gap-5 rounded-3xl bg-background/70 px-6 py-8 backdrop-blur-sm">
+      <div className="relative z-10 flex max-w-3xl flex-col items-center gap-5 rounded-3xl bg-background/70 px-6 py-8 backdrop-blur-sm">
+        {/* official registration seal — inside the name card, above the name.
+            Emerald in light theme, gold in dark (a fixed-colour PNG can't adapt) */}
+        <motion.div {...fadeUp(0.1)}>
+          <Image
+            src={branding.seal}
+            alt={`Official registration seal of ${branding.siteName}`}
+            width={520}
+            height={520}
+            priority
+            className="h-24 w-auto sm:h-28 dark:hidden"
+          />
+          <Image
+            src={branding.sealLight}
+            alt={`Official registration seal of ${branding.siteName}`}
+            width={520}
+            height={520}
+            priority
+            className="hidden h-24 w-auto sm:h-28 dark:block"
+          />
+        </motion.div>
         <motion.h1
           {...fadeUp(0.15)}
           className="font-heading text-4xl font-bold tracking-tight sm:text-6xl"
