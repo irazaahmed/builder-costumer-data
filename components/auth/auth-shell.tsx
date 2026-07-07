@@ -24,15 +24,6 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
           aria-hidden
           className="absolute -bottom-20 -left-10 size-72 rounded-full bg-black/20 blur-3xl"
         />
-        {/* official registration seal — small mark in the bottom-left corner */}
-        <Image
-          src={branding.sealLight}
-          alt=""
-          aria-hidden
-          width={520}
-          height={520}
-          className="pointer-events-none absolute bottom-6 left-6 w-28 max-w-none opacity-30"
-        />
         <Link href="/" className="relative w-fit">
           <BrandLogo size={40} variant="onBrand" />
         </Link>
@@ -52,9 +43,20 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
             ))}
           </ul>
         </div>
-        <p className="relative text-xs text-primary-foreground/60">
-          17-acre project · Surjani Sector 12, Karachi · 360 plots
-        </p>
+        <div className="relative flex items-center gap-3">
+          {/* official registration seal — small mark beside the footer line */}
+          <Image
+            src={branding.sealLight}
+            alt=""
+            aria-hidden
+            width={520}
+            height={520}
+            className="pointer-events-none size-14 shrink-0 opacity-40"
+          />
+          <p className="text-xs text-primary-foreground/60">
+            17-acre project · Surjani Sector 12, Karachi · 360 plots
+          </p>
+        </div>
       </aside>
 
       {/* Form area */}
