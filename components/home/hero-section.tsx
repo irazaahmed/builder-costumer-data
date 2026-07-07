@@ -48,7 +48,7 @@ export default function HeroSection() {
         aria-hidden
         width={520}
         height={520}
-        className="pointer-events-none absolute left-1/2 top-1/2 -z-20 w-[22rem] max-w-none -translate-x-1/2 -translate-y-1/2 opacity-[0.06] dark:hidden"
+        className="pointer-events-none absolute left-1/2 top-16 -z-20 w-[17rem] max-w-none -translate-x-1/2 opacity-25 dark:hidden"
       />
       <Image
         src={branding.sealLight}
@@ -56,7 +56,7 @@ export default function HeroSection() {
         aria-hidden
         width={520}
         height={520}
-        className="pointer-events-none absolute left-1/2 top-1/2 -z-20 hidden w-[22rem] max-w-none -translate-x-1/2 -translate-y-1/2 opacity-[0.08] dark:block"
+        className="pointer-events-none absolute left-1/2 top-16 -z-20 hidden w-[17rem] max-w-none -translate-x-1/2 opacity-30 dark:block"
       />
 
       <div
