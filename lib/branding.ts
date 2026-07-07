@@ -13,6 +13,13 @@ export const branding = {
   // runs on Vercel; this is only the domain pointed at it via DNS.
   url: "https://lodhisociety.com",
   logoPath: "/logo.svg",
+  // Official registration seal of the society (the real rubber-stamp emblem,
+  // cleaned to a transparent single-colour mark). Used as an authenticity /
+  // trust seal — NOT as the primary UI logo (that stays BrandLogo). `seal` is
+  // emerald for light backgrounds; `sealLight` is gold for dark backgrounds.
+  seal: "/seal.png",
+  sealLight: "/seal-light.png",
+  registrationNo: "K-1193",
   contact: {
     email: "lodhibiradricooperativehousing@gmail.com",
     whatsapp: "+92 345 6010622",

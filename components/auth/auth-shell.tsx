@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ShieldCheck, FileLock2, BadgeCheck } from "lucide-react";
 import { branding } from "@/lib/branding";
@@ -22,6 +23,15 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
         <div
           aria-hidden
           className="absolute -bottom-20 -left-10 size-72 rounded-full bg-black/20 blur-3xl"
+        />
+        {/* official registration seal, large & faint, as a background watermark */}
+        <Image
+          src={branding.sealLight}
+          alt=""
+          aria-hidden
+          width={520}
+          height={520}
+          className="pointer-events-none absolute -bottom-16 -right-16 w-[26rem] max-w-none opacity-[0.07]"
         />
         <Link href="/" className="relative w-fit">
           <BrandLogo size={40} variant="onBrand" />

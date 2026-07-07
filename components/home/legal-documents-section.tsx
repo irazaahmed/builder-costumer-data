@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "motion/react";
 import { FileText, Download } from "lucide-react";
 import {
@@ -8,6 +9,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
+import { branding } from "@/lib/branding";
 import type { LegalDocument } from "@/lib/gallery";
 
 const BADGE_CLASSES = [
@@ -32,6 +34,23 @@ export default function LegalDocumentsSection({
     >
       <div className="mx-auto flex max-w-5xl flex-col gap-10">
         <div className="flex flex-col items-center gap-3 text-center">
+          {/* emerald seal for light theme, gold for dark — a fixed-colour PNG
+              can't adapt, so swap the source by theme */}
+          <Image
+            src={branding.seal}
+            alt={`Official registration seal of ${branding.siteName}`}
+            width={104}
+            height={104}
+            className="h-24 w-auto opacity-90 dark:hidden"
+          />
+          <Image
+            src={branding.sealLight}
+            alt=""
+            aria-hidden
+            width={104}
+            height={104}
+            className="hidden h-24 w-auto opacity-90 dark:block"
+          />
           <span className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">
             Legal Documents
           </span>
@@ -42,6 +61,9 @@ export default function LegalDocumentsSection({
             Official by-laws, registration, and map documents of the society —
             open to view or download by anyone.
           </p>
+          <span className="mt-1 inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-xs font-medium text-gold">
+            Registered Cooperative Society &middot; Reg. No. {branding.registrationNo}
+          </span>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

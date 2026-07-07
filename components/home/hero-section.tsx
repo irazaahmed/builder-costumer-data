@@ -40,6 +40,24 @@ export default function HeroSection() {
         aria-hidden
         className="absolute -top-40 left-1/2 -z-20 size-[640px] -translate-x-1/2 rounded-full bg-gold/10 blur-3xl"
       />
+      {/* official registration seal as a faint centred watermark — emerald in
+          light theme, gold in dark (a fixed-colour PNG can't adapt) */}
+      <Image
+        src={branding.seal}
+        alt=""
+        aria-hidden
+        width={520}
+        height={520}
+        className="pointer-events-none absolute left-1/2 top-1/2 -z-20 w-[22rem] max-w-none -translate-x-1/2 -translate-y-1/2 opacity-[0.06] dark:hidden"
+      />
+      <Image
+        src={branding.sealLight}
+        alt=""
+        aria-hidden
+        width={520}
+        height={520}
+        className="pointer-events-none absolute left-1/2 top-1/2 -z-20 hidden w-[22rem] max-w-none -translate-x-1/2 -translate-y-1/2 opacity-[0.08] dark:block"
+      />
 
       <div
         aria-hidden

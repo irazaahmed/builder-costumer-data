@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { MotionConfig } from "motion/react";
 import { Mail, MapPin } from "lucide-react";
@@ -93,6 +94,20 @@ export default function Home() {
             <p className="max-w-xs text-sm text-primary-foreground/70">
               {branding.tagline}
             </p>
+            <div className="mt-1 flex items-center gap-3">
+              <Image
+                src={branding.sealLight}
+                alt={`Official registration seal of ${branding.siteName}`}
+                width={56}
+                height={56}
+                className="size-14 shrink-0 opacity-90"
+              />
+              <span className="text-xs leading-snug text-primary-foreground/70">
+                Registered Cooperative Society
+                <br />
+                Reg. No. {branding.registrationNo}
+              </span>
+            </div>
           </div>
 
           <div className="flex flex-col gap-2">
