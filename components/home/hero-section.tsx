@@ -17,38 +17,25 @@ const fadeUp = (delay: number) => ({
 export default function HeroSection() {
   return (
     <section className="relative isolate flex flex-col items-center gap-8 overflow-hidden px-6 py-28 text-center">
-      {/* blurred project photo as the deepest backdrop layer */}
-      <div aria-hidden className="absolute inset-0 -z-30 overflow-hidden">
-        <Image
-          src="/gallery/About.jpeg"
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="scale-105 object-cover object-center opacity-100 blur-sm dark:opacity-90"
-        />
-      </div>
-      {/* emerald tint keeps the photo on-brand */}
-      <div aria-hidden className="absolute inset-0 -z-20 bg-primary/15 dark:bg-primary/30" />
-      {/* contrast + bottom fade: darkens the pale photo (esp. in light mode) so it
-          reads as an image, then blends into the next section */}
+      {/* layered emerald wash + gold radial glow */}
       <div
         aria-hidden
-        className="absolute inset-0 -z-20 bg-gradient-to-b from-black/25 via-black/10 to-background"
+        className="absolute inset-0 -z-20 bg-gradient-to-b from-primary/10 via-background to-background"
       />
       <div
         aria-hidden
         className="absolute -top-40 left-1/2 -z-20 size-[640px] -translate-x-1/2 rounded-full bg-gold/10 blur-3xl"
       />
-      {/* official registration seal as a faint centred watermark — emerald in
-          light theme, gold in dark (a fixed-colour PNG can't adapt) */}
+
+      {/* official registration seal as a background crest — emerald in light
+          theme, gold in dark (a fixed-colour PNG can't adapt) */}
       <Image
         src={branding.seal}
         alt=""
         aria-hidden
         width={520}
         height={520}
-        className="pointer-events-none absolute left-1/2 top-16 -z-20 w-[17rem] max-w-none -translate-x-1/2 opacity-25 dark:hidden"
+        className="pointer-events-none absolute left-1/2 top-12 -z-20 w-[20rem] max-w-none -translate-x-1/2 opacity-50 dark:hidden"
       />
       <Image
         src={branding.sealLight}
@@ -56,7 +43,7 @@ export default function HeroSection() {
         aria-hidden
         width={520}
         height={520}
-        className="pointer-events-none absolute left-1/2 top-16 -z-20 hidden w-[17rem] max-w-none -translate-x-1/2 opacity-30 dark:block"
+        className="pointer-events-none absolute left-1/2 top-12 -z-20 hidden w-[20rem] max-w-none -translate-x-1/2 opacity-40 dark:block"
       />
 
       <div
@@ -76,7 +63,7 @@ export default function HeroSection() {
         Surjani Sector 12, Karachi · 17 Acres
       </motion.span>
 
-      <div className="relative z-10 flex max-w-3xl flex-col gap-5 rounded-3xl bg-background/85 px-6 py-8 shadow-xl ring-1 ring-border/50 backdrop-blur-md">
+      <div className="relative z-10 flex max-w-3xl flex-col gap-5 rounded-3xl bg-background/70 px-6 py-8 backdrop-blur-sm">
         <motion.h1
           {...fadeUp(0.05)}
           className="font-heading text-4xl font-bold tracking-tight sm:text-6xl"
