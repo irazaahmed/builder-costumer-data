@@ -87,7 +87,7 @@ Aage ka tareeqa is par thoda badalta hai:
   npx prisma db seed
   ```
 - [ ] Confirm: 360 plots (P-001 se P-360) aur admin user ban gaye.
-- [ ] **Admin password badlo:** seed wala default password (`admin@portal.com`) sirf dev ke liye tha. Login karke **Settings → Change password** se naya password set karo (ya pehle admin ki email/password seed mein update karo).
+- [ ] **Admin password badlo:** seed wala default login (`admin@lodhisociety.com` / `Admin123!`) sirf dev ke liye tha. Login karke **Settings → Change password** se naya password set karo (ya pehle admin ki email/password seed mein update karo).
 
 ---
 

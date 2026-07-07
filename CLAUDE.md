@@ -212,7 +212,7 @@ Enforce role AND status checks in middleware and in every server action. Never t
 
 `prisma/seed.ts` inserts only permanent structural data:
 
-- One admin user (email `admin@portal.com`, known dev password, hashed).
+- One admin user (email `admin@lodhisociety.com`, known dev password, hashed).
 - The real plot scheme from the official member list: `R-01`..`R-322` and `L-01`..`L-37` (359 plots), all status SOLD except `R-248`, which is `CANCELLED`. Plots carry no size/block — those fields were removed. Re-running the seed deletes any unlinked plots (e.g. the old `P-001`..`P-360` placeholders) and recreates the canonical set; linked plots are left untouched.
 
 Dummy clients, pending signups, and sample documents were used during Phases 3-5 to test the verification/upload/view flows end to end, then deliberately removed from both the database and `seed.ts` once real client onboarding began. Re-running the seed script must never recreate fake clients. Real clients are now added one at a time, either via self-signup + admin link, or via the admin-create-client flow.

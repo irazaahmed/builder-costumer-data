@@ -29,7 +29,7 @@ A secure document management portal for a real estate builder (17-acre project, 
    ```bash
    npm run dev
    ```
-   Open [http://localhost:3000](http://localhost:3000). Seeded admin login: `admin@portal.com` / `Admin123!` (change this immediately on any real deployment, via Settings → Change Password).
+   Open [http://localhost:3000](http://localhost:3000). Seeded admin login: `admin@lodhisociety.com` / `Admin123!` (change this immediately on any real deployment, via Settings → Change Password).
 
 ## Project docs
 
