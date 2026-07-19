@@ -164,3 +164,130 @@ export function buildNotificationKey(fileName: string) {
   const safeFileName = fileName.replace(/[^a-zA-Z0-9.\-_]/g, "_");
   return `notifications/${timestamp}-${safeFileName}`;
 }
+
+// ---------------------------------------------------------------------------
+// Gallery media (homepage photo/video gallery)
+//
+// Deliberately a different security model from documents/notifications
+// above: gallery photos and videos are public marketing content — today
+// they're literally public static files under `public/gallery/`, served to
+// every anonymous visitor with zero access control. Storing them in
+// Cloudinary as delivery `type: "upload"` (public) with `resource_type:
+// "image" | "video"` is not a security regression versus current behavior,
+// and it lets the public site (and any CDN in front of it) cache the asset
+// URLs directly instead of re-signing on every render. This is strictly
+// additive: RESOURCE_TYPE/DELIVERY_TYPE and every helper above stay private
+// raw, unchanged, for Document/Notification.
+
+const GALLERY_DELIVERY_TYPE = "upload";
+
+/**
+ * Builds the Cloudinary public_id for a gallery upload — deliberately
+ * WITHOUT the file extension. Unlike `resource_type: "raw"` (documents),
+ * Cloudinary always appends `.{detected-format}` itself when building the
+ * delivery URL for `resource_type: "image" | "video"`, regardless of what
+ * text is already in the public_id. Keeping the extension out of the key
+ * avoids a double-extension delivery URL (e.g. `photo.jpeg.jpg`) — see
+ * `getGallerySecureUrl`, which appends the real detected format instead.
+ */
+export function buildGalleryKey(folderSlug: string, fileName: string) {
+  const timestamp = Date.now();
+  const dotIndex = fileName.lastIndexOf(".");
+  const baseName = dotIndex > 0 ? fileName.slice(0, dotIndex) : fileName;
+  const safeBaseName = baseName.replace(/[^a-zA-Z0-9.\-_]/g, "_");
+  return `gallery/${folderSlug}/${timestamp}-${safeBaseName}`;
+}
+
+interface GetGalleryUploadUrlParams {
+  key: string;
+  resourceType: "image" | "video";
+}
+
+/**
+ * Signed direct-upload target for a gallery image/video, mirroring
+ * `getUploadUrl` above but for public `resource_type: "image" | "video"`
+ * assets instead of private raw documents. The browser still POSTs a
+ * `FormData` (the file plus every entry in `fields`) directly to `url` — the
+ * file never passes through a Next.js server action or route handler.
+ */
+export async function getGalleryUploadUrl({
+  key,
+  resourceType,
+}: GetGalleryUploadUrlParams): Promise<UploadUrlResult> {
+  const timestamp = Math.floor(Date.now() / 1000);
+  const paramsToSign = {
+    timestamp,
+    public_id: key,
+    type: GALLERY_DELIVERY_TYPE,
+  };
+
+  const signed = cloudinary.utils.sign_request(paramsToSign, {});
+
+  const url = `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/${resourceType}/upload`;
+
+  return {
+    url,
+    fields: {
+      api_key: String(signed.api_key),
+      timestamp: String(signed.timestamp),
+      signature: String(signed.signature),
+      public_id: String(signed.public_id),
+      type: String(signed.type),
+    },
+    key,
+  };
+}
+
+/**
+ * Deterministic public delivery URL for a gallery asset. Unlike
+ * `getDownloadUrl`, this needs no signature or `expires_at` — the asset is
+ * public (`type: "upload"`), so this URL can be derived any time, safely
+ * cached by the browser/CDN.
+ *
+ * `format` (e.g. "jpg", "mp4") is required: for `resource_type: "image" |
+ * "video"`, Cloudinary always appends `.{format}` to build the real
+ * delivery URL, regardless of what's in `key` — omitting it 404s. `format`
+ * is whatever Cloudinary detected at upload time (see `GalleryItem.format`),
+ * which doesn't always match the original file extension verbatim (e.g.
+ * `.jpeg` uploads are detected as format `jpg`).
+ */
+export function getGallerySecureUrl(
+  key: string,
+  resourceType: "image" | "video",
+  format: string
+): string {
+  return `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/${resourceType}/upload/${key}.${format}`;
+}
+
+/** Deletes a gallery image/video from Cloudinary. Admin-only, caller's responsibility. */
+export async function deleteGalleryFile(
+  key: string,
+  resourceType: "image" | "video"
+): Promise<void> {
+  await cloudinary.uploader.destroy(key, {
+    resource_type: resourceType,
+    type: GALLERY_DELIVERY_TYPE,
+    invalidate: true,
+  });
+}
+
+/**
+ * Server-side upload straight from a local file path, bypassing the signed
+ * direct-to-Cloudinary POST flow that `getGalleryUploadUrl` sets up for the
+ * browser. Only for one-time server-side tooling (e.g. the
+ * prisma/scripts/migrate-gallery-to-cloudinary.ts backfill) — regular admin
+ * uploads from the UI must keep using the browser POST flow so file bytes
+ * never pass through the Next.js server.
+ */
+export async function uploadGalleryFileFromDisk(
+  filePath: string,
+  key: string,
+  resourceType: "image" | "video"
+): Promise<{ format: string }> {
+  const result = await cloudinary.uploader.upload(filePath, {
+    public_id: key,
+    resource_type: resourceType,
+    type: GALLERY_DELIVERY_TYPE,
+  });
+  return { format: result.format };
+}

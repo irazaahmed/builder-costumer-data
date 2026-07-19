@@ -103,3 +103,34 @@ model Notification {
   createdBy String // admin user id who created it
   createdAt DateTime @default(now())
 }
+
+model GalleryFolder {
+  id          String        @id @default(cuid())
+  slug        String        @unique
+  title       String
+  description String?
+  sortIndex   Int           @default(0)
+  items       GalleryItem[]
+  createdBy   String // admin user id
+  createdAt   DateTime      @default(now())
+}
+
+model GalleryItem {
+  id         String          @id @default(cuid())
+  folder     GalleryFolder   @relation(fields: [folderId], references: [id], onDelete: Cascade)
+  folderId   String
+  type       GalleryItemType
+  fileKey    String // Cloudinary public_id (no extension)
+  format     String // Cloudinary-detected delivery extension, e.g. "jpg", "mp4" — required to build the delivery URL for image/video resource types
+  fileName   String
+  fileSize   Int
+  mimeType   String
+  sortIndex  Int             @default(0)
+  uploadedBy String // admin user id
+  uploadedAt DateTime        @default(now())
+}
+
+enum GalleryItemType {
+  IMAGE
+  VIDEO
+}

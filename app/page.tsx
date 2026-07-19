@@ -26,8 +26,8 @@ const SECTION_LINKS = [
   { href: "#contact", label: "Contact" },
 ];
 
-export default function Home() {
-  const galleryCategories = getGalleryCategories();
+export default async function Home() {
+  const galleryCategories = await getGalleryCategories();
   const legalDocuments = getLegalDocuments();
 
   return (

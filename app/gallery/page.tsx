@@ -14,7 +14,7 @@ export default async function GalleryPage({
   searchParams: Promise<{ cat?: string }>;
 }) {
   const { cat } = await searchParams;
-  const categories = getGalleryCategories();
+  const categories = await getGalleryCategories();
 
   return (
     <div className="flex min-h-screen flex-col">
